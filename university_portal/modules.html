@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Modules - University Management System</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 60px;
+            background: #2563eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .sidebar-icon:hover,
+        .sidebar-icon.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .sidebar-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .theme-toggle {
+            margin-top: auto;
+        }
+
+                /* Sidebar Tooltips */
+        .sidebar-icon {
+            position: relative;
+        }
+
+        .sidebar-icon::after {
+           content: attr(data-tooltip);
+           position: absolute;
+           left: 70px;
+           top: 50%;
+           transform: translateY(-50%);
+           background: #1e293b;
+           color: white;
+           padding: 8px 12px;
+           border-radius: 6px;
+           font-size: 13px;
+           font-weight: 500;
+           white-space: nowrap;
+           opacity: 0;
+           pointer-events: none;
+           transition: opacity 0.2s, left 0.2s;
+           z-index: 1000;
+        }
+
+      .sidebar-icon::before {
+            content: '';
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: #1e293b;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, left 0.2s;
+            z-index: 1000;
+       }
+
+       .sidebar-icon:hover::after {
+          opacity: 1;
+          left: 75px;
+        }
+
+       .sidebar-icon:hover::before {
+           opacity: 1;
+           left: 65px;
+        }
+
+        /* Dark mode tooltip colors */
+        body.dark-mode .sidebar-icon::after {
+           background: #334155;
+        }
+
+        body.dark-mode .sidebar-icon::before {
+           border-right-color: #334155;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 60px;
+            padding: 20px;
+            max-width: 1400px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .share-btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Module Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .module-icon {
+            width: 40px;
+            height: 40px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .module-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .module-credits {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .module-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .module-code {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .progress-text {
+            color: #64748b;
+        }
+
+        .progress-value {
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .module-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .semester-badge {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Module Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 32px;
+        }
+
+        .detail-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .detail-text {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .instructor-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .instructor-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+        }
+
+        .instructor-info h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .instructor-info p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .assignments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .assignment-item {
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .assignment-info h4 {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .assignment-info p {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-upcoming {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .schedule-week {
+            font-weight: 600;
+            color: #2563eb;
+            min-width: 80px;
+        }
+
+        .schedule-content {
+            flex: 1;
+        }
+
+        .schedule-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .schedule-materials {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .material-link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .material-link:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .material-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .resource-card {
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .resource-card:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            color: #64748b;
+        }
+
+        .resource-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .resource-type {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        body.dark-mode {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .sidebar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .top-bar,
+        body.dark-mode .module-card,
+        body.dark-mode .modal-content {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .module-title,
+        body.dark-mode .page-title,
+        body.dark-mode h1,
+        body.dark-mode h3,
+        body.dark-mode h4 {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .module-card {
+            border: 1px solid #334155;
+        }
+
+        body.dark-mode .progress-bar {
+            background: #334155;
+        }
+
+        body.dark-mode .module-footer {
+            border-top-color: #334155;
+        }
+
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-icon" data-page="dashboard" data-tooltip="Dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="timetable" data-tooltip="Timetable">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            </div>
+            <div class="sidebar-icon active" data-page="modules" data-tooltip="My Modules">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="news" data-tooltip="News">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="career" data-tooltip="Career Center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="contact" data-tooltip="Contact">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <div class="sidebar-icon theme-toggle" data-tooltip="Toggle Theme">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2c-1.05 0-2.05.16-3 .46 4.06 1.27 7 5.06 7 9.54 0 4.48-2.94 8.27-7 9.54.95.3 1.95.46 3 .46 5.52 0 10-4.48 10-10S14.52 2 9 2z"/></svg>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">Smart University System</h1>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>My Modules</h1>
+                <p>Track your enrolled courses and progress</p>
+            </div>
+
+            <!-- Modules Grid -->
+            <div class="modules-grid">
+                <!-- Module 1 -->
+                <div class="module-card" data-module="data-structures">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">4 Credits</div>
+                    </div>
+                    <h3 class="module-title">Data Structures & Algorithms</h3>
+                    <p class="module-code">CS301 • Dr. Sarah Johnson</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                45 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="module-card" data-module="web-development">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">3 Credits</div>
+                    </div>
+                    <h3 class="module-title">Web Development</h3>
+                    <p class="module-code">CS305 • Prof. Michael Chen</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">60%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                38 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="module-card" data-module="database-systems">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">4 Credits</div>
+                    </div>
+                    <h3 class="module-title">Database Systems</h3>
+                    <p class="module-code">CS402 • Dr. Emily Rodriguez</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">50%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                42 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 4 -->
+                <div class="module-card" data-module="software-engineering">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">3 Credits</div>
+                    </div>
+                    <h3 class="module-title">Software Engineering</h3>
+                    <p class="module-code">CS410 • Prof. David Williams</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">65%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                50 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 5 -->
+                <div class="module-card" data-module="network-security">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">3 Credits</div>
+                    </div>
+                    <h3 class="module-title">Network Security</h3>
+                    <p class="module-code">CS420 • Dr. Lisa Anderson</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                35 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module 6 -->
+                <div class="module-card" data-module="mathematics">
+                    <div class="module-header">
+                        <div class="module-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+                        </div>
+                        <div class="module-credits">4 Credits</div>
+                    </div>
+                    <h3 class="module-title">Mathematics</h3>
+                    <p class="module-code">MATH201 • Prof. Robert Taylor</p>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span class="progress-text">Course Progress</span>
+                            <span class="progress-value">70%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="module-footer">
+                        <div class="module-meta">
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                55 students
+                            </div>
+                            <div class="meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                                Spring 2026
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Module Detail Modal -->
+    <div class="modal" id="moduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Data Structures & Algorithms</h2>
+                    <p style="color: #64748b; font-size: 13px;">CS301 • 4 Credits • Spring 2026</p>
+                </div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tab Navigation -->
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-modal-tab="overview">Overview</button>
+                    <button class="tab-btn" data-modal-tab="schedule">Schedule</button>
+                    <button class="tab-btn" data-modal-tab="resources">Resources</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-content active" id="overview-tab">
+                    <div class="detail-section">
+                        <h3>Module Description</h3>
+                        <p class="detail-text">
+                            This module provides a comprehensive introduction to the fundamental concepts of data structures and algorithms. 
+                            Students will learn how to design, analyze, and implement efficient algorithms and data structures to solve complex 
+                            computational problems. Topics include arrays, linked lists, stacks, queues, trees, graphs, sorting, and searching algorithms.
+                        </p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Module Leader</h3>
+                        <div class="instructor-card">
+                            <div class="instructor-avatar">J</div>
+                            <div class="instructor-info">
+                                <h4>Dr. Sarah Johnson</h4>
+                                <p>Senior Lecturer</p>
+                                <div class="contact-info">
+                                    <div class="contact-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                        sarah.johnson@university.edu
+                                    </div>
+                                    <div class="contact-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                        Room 305, Computer Science Building
+                                    </div>
+                                    <div class="contact-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                        Mon/Wed 14:00 - 16:00
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h3>Assignments</h3>
+                        <div class="assignments-list">
+                            <div class="assignment-item">
+                                <div class="assignment-info">
+                                    <h4>Assignment 1: Array Manipulation</h4>
+                                    <p>Due: Feb 15, 2026</p>
+                                </div>
+                                <div class="status-badge status-completed">Completed</div>
+                            </div>
+                            <div class="assignment-item">
+                                <div class="assignment-info">
+                                    <h4>Assignment 2: Linked Lists & Stacks</h4>
+                                    <p>Due: Mar 10, 2026</p>
+                                </div>
+                                <div class="status-badge status-pending">Pending</div>
+                            </div>
+                            <div class="assignment-item">
+                                <div class="assignment-info">
+                                    <h4>Assignment 3: Graph Algorithms</h4>
+                                    <p>Due: May 05, 2026</p>
+                                </div>
+                                <div class="status-badge status-upcoming">Upcoming</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Tab -->
+                <div class="tab-content" id="schedule-tab">
+                    <div class="detail-section">
+                        <h3>12-Week Schedule</h3>
+                        <p class="detail-text" style="margin-bottom: 20px;">Lectures, workshops, and materials for the semester</p>
+                        
+                        <div class="schedule-list">
+                            <div class="schedule-item">
+                                <div class="schedule-week">Week 1:</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Introduction & Big O Notation</div>
+                                    <div class="schedule-materials">
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                            Lecture Slides
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                            Workshop Brief
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 3.3c1.49 0 2.7 1.21 2.7 2.7 0 1.49-1.21 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7 0-1.49 1.21-2.7 2.7-2.7zM18 16H6v-.9c0-2 4-3.1 6-3.1s6 1.1 6 3.1v.9z"/></svg>
+                                            Additional Reading
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-item">
+                                <div class="schedule-week">Week 2:</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Arrays and Strings</div>
+                                    <div class="schedule-materials">
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                            Lecture Slides
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                            Workshop Brief
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 3.3c1.49 0 2.7 1.21 2.7 2.7 0 1.49-1.21 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7 0-1.49 1.21-2.7 2.7-2.7zM18 16H6v-.9c0-2 4-3.1 6-3.1s6 1.1 6 3.1v.9z"/></svg>
+                                            Additional Reading
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-item">
+                                <div class="schedule-week">Week 3:</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Linked Lists</div>
+                                    <div class="schedule-materials">
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                            Lecture Slides
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                            Workshop Brief
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 3.3c1.49 0 2.7 1.21 2.7 2.7 0 1.49-1.21 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7 0-1.49 1.21-2.7 2.7-2.7zM18 16H6v-.9c0-2 4-3.1 6-3.1s6 1.1 6 3.1v.9z"/></svg>
+                                            Additional Reading
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-item">
+                                <div class="schedule-week">Week 4:</div>
+                                <div class="schedule-content">
+                                    <div class="schedule-title">Stacks and Queues</div>
+                                    <div class="schedule-materials">
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                                            Lecture Slides
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                            Workshop Brief
+                                        </a>
+                                        <a class="material-link">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h4l3 3 3-3h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 3.3c1.49 0 2.7 1.21 2.7 2.7 0 1.49-1.21 2.7-2.7 2.7-1.49 0-2.7-1.21-2.7-2.7 0-1.49 1.21-2.7 2.7-2.7zM18 16H6v-.9c0-2 4-3.1 6-3.1s6 1.1 6 3.1v.9z"/></svg>
+                                            Additional Reading
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Tab -->
+                <div class="tab-content" id="resources-tab">
+                    <div class="detail-section">
+                        <h3>Learning Resources</h3>
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                </div>
+                                <div class="resource-title">Course Syllabus</div>
+                                <div class="resource-type">PDF Document</div>
+                            </div>
+
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                                <div class="resource-title">Introduction to Algorithms (Textbook)</div>
+                                <div class="resource-type">Link Document</div>
+                            </div>
+
+                            <div class="resource-card">
+                                <div class="resource-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                </div>
+                                <div class="resource-title">Java Documentation</div>
+                                <div class="resource-type">Link Document</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Theme toggle with localStorage persistence
+       function initTheme() {
+       // Check if dark mode was previously enabled
+          if (localStorage.getItem('darkMode') === 'enabled') {
+              document.body.classList.add('dark-mode');
+            }
+        }
+
+        // Initialize theme on page load
+        initTheme();
+
+        // Theme toggle button
+      document.querySelector('.theme-toggle').addEventListener('click', function() {
+          document.body.classList.toggle('dark-mode');
+    
+          // Save preference to localStorage
+          if (document.body.classList.contains('dark-mode')) {
+              localStorage.setItem('darkMode', 'enabled');
+          } else {
+              localStorage.setItem('darkMode', 'disabled');
+          }
+        });
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-icon[data-page]').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const page = this.dataset.page;
+                const pageMap = {
+                    'dashboard': 'dashboard.html',
+                    'timetable': 'timetable.html',
+                    'modules': 'modules.html',
+                    'news': 'news.html',
+                    'career': 'career-centre.html',
+                    'contact': 'contact.html'
+                };
+                
+                if (pageMap[page]) {
+                    window.location.href = pageMap[page];
+                }
+            });
+        });
+
+        // Open module modal
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.getElementById('moduleModal').classList.add('active');
+            });
+        });
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('moduleModal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('moduleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Modal tab switching
+        document.querySelectorAll('.tab-btn[data-modal-tab]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                const tab = this.dataset.modalTab;
+                document.getElementById(tab + '-tab').classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
