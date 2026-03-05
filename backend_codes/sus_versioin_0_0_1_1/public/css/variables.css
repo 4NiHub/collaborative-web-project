@@ -1,0 +1,30 @@
+:root {
+    
+    --sidebar-collapsed: 100px;
+    --sidebar-expanded:  240px;
+    --transition:        all 0.28s ease;
+
+   
+    --blue:         #2563eb;
+    --blue-light:   #eff6ff;
+    --green:        #16a34a;
+    --green-light:  #dcfce7;
+    --orange:       #d97706;
+    --orange-light: #fef3c7;
+    --red:          #dc2626;
+    --red-light:    #fee2e2;
+    --border:       #e2e8f0;
+    --muted:        #64748b;
+
+    
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+body.dark-mode {
+    --border: #334155;
+    --muted:  #94a3b8;
+    --blue-light: #1e3a5f;
+    --green-light: #14532d;
+    --orange-light: #451a03;
+    --red-light: #450a0a;
+}
