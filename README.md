@@ -1,6 +1,8 @@
 # **SUS - Smart University System**
 
-## Wolverhampton University - Collaborative Development Module
+## Wolverhampton University
+
+### Module: Collaborative Development
 
 <br>
 
