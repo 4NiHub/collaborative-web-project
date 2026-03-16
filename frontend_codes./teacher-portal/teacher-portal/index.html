@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart University System – Teacher Portal</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body { min-height:100vh; display:flex; align-items:center; justify-content:center; background:#f1f5f9; }
+        .login-card {
+            background:white; border-radius:16px; padding:48px 40px; max-width:400px; width:100%;
+            box-shadow:0 4px 24px rgba(0,0,0,0.08); text-align:center;
+        }
+        .logo-wrap { margin-bottom:30px; display: flex; justify-content: center; align-items: center; }
+        .logo-wrap img { height:160px; }
+        .login-title { font-size:22px; font-weight:700; color:#1e293b; margin-bottom:6px; }
+        .login-sub   { font-size:14px; color:#64748b; margin-bottom:32px; }
+        .form-group  { margin-bottom:16px; text-align:left; }
+        .form-group label { font-size:13px; font-weight:600; color:#475569; display:block; margin-bottom:6px; }
+        .form-group input {
+            width:100%; padding:11px 14px; border:1.5px solid #e2e8f0;
+            border-radius:8px; font-size:14px; outline:none;
+            transition:border-color 0.2s; box-sizing:border-box;
+        }
+        .form-group input:focus { border-color:#2563eb; }
+        .login-btn {
+            width:100%; padding:13px; background:#2563eb; color:white; border:none;
+            border-radius:8px; font-size:15px; font-weight:600; cursor:pointer;
+            transition:background 0.2s; margin-top:8px;
+        }
+        .login-btn:hover { background:#1d4ed8; }
+        .error-msg { color:#dc2626; font-size:13px; margin-top:12px; display:none; }
+        .portal-label {
+            display:inline-block; margin-bottom:16px; padding:5px 14px;
+            background:#eff6ff; color:#2563eb; border-radius:20px;
+            font-size:12px; font-weight:600; letter-spacing:0.3px;
+        }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="logo-wrap">
+        <img src="images/sus_logo.png" alt="SUS Logo">
+    </div>
+    <div class="login-title">Sign in to your account</div>
+    <div class="login-sub">Smart University System</div>
+
+    <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" required>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="error-msg" id="errorMsg">Invalid credentials. Please try again.</div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+    if (isLoggedIn()) window.location.href = 'dashboard.html';
+
+    async function doLogin() {
+        var email    = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        var errMsg   = document.getElementById('errorMsg');
+        errMsg.style.display = 'none';
+        try {
+            await AuthAPI.login(email, password);
+            window.location.href = 'dashboard.html';
+        } catch(err) {
+            errMsg.style.display = 'block';
+        }
+    }
+
+    document.getElementById('email').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('password').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+</script>
+</body>
+</html>
