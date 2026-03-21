@@ -136,3 +136,4 @@ class RegisterController extends Controller
                 ->withInput();
         }
     }
+}
