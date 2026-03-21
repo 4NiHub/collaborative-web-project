@@ -15,11 +15,13 @@ use App\Http\Controllers\Auth\RegisterController;
 Route::get('/', fn() => redirect()->route('login'));
 
 // ── Public Auth Routes ───────────────────────────────────────────────────────
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
-Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
-Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+    Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -28,12 +30,9 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 
 // ── Two-Factor Authentication Routes ─────────────────────────────────────────
 Route::middleware('2fa.pending')->group(function () {
-    Route::get('/two-factor', function () {
-        return view('auth.two-factor');
-    })->name('2fa.verify');
-
-    Route::post('/two-factor', [AuthController::class, 'verify2fa'])->name('2fa.verify.submit');
-    Route::post('/two-factor/resend', [AuthController::class, 'resend2fa'])->name('2fa.resend');
+    Route::get('/two-factor', [AuthController::class, 'show2FA'])->name('2fa.verify');
+    Route::post('/two-factor', [AuthController::class, 'verify2FA'])->name('2fa.verify.submit');
+    Route::post('/two-factor/resend', [AuthController::class, 'resend2FA'])->name('2fa.resend');
 });
 
 // ── Protected Routes ─────────────────────────────────────────────────────────
@@ -41,13 +40,13 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard — role-aware view selection
     Route::get('/dashboard', function () {
-        if (auth()->user()->role_id === 1) {
-            return view('dashboard');
-        }
-        if (auth()->user()->role_id === 2) {
-            return view('teacher.dashboard');
-        }
-        return view('dashboard')->with('error', 'Unsupported role');
+        $roleId = auth()->user()->role_id;
+        
+        return match($roleId) {
+            1 => view('dashboard'),
+            2 => view('teacher.dashboard'),
+            default => view('dashboard')->with('error', 'Unsupported role'),
+        };
     })->name('dashboard');
 
     // ── Student-only ─────────────────────────────────────────────────────────
