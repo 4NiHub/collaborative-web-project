@@ -83,10 +83,10 @@ class RegisterController extends Controller
                     'surname' => $request->surname,
                     'email' => $request->email,
                     'phone_number' => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
-                    'department' => \fake()->randomElement(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
+                    'department' => \Illuminate\Support\Arr::random(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
+                    'bio' => 'Expert in ' . \Illuminate\Support\Arr::random(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
                     'office_location' => 'Block ' . chr(rand(65,68)) . ', Room ' . rand(100,300),
                     'office_hours' => 'Mon 14:00–16:00, Wed 10:00–12:00',
-                    'bio' => 'Expert in ' . \fake()->randomElement(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
                     'nationality' => 'British',
                     'languages' => 'English',
                     'profile_data' => json_encode([
