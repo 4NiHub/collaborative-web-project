@@ -348,7 +348,7 @@
                 body: new FormData(this),
                 headers: {
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             });
 
@@ -401,16 +401,31 @@
     function resendCode() {
         resendBtn.disabled = true;
         resendBtn.textContent = 'Sending…';
+
         fetch('{{ route("2fa.resend") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Content-Type': 'application/json',
+                'Accept': 'application/json' // Add this to force JSON errors
             },
-        }).then(() => window.location.reload())
-          .catch(() => {
+        })
+        .then(response => {
+            if (response.status === 419 || response.status === 401) {
+                // Session expired, must go back to login
+                window.location.href = '/login';
+                return;
+            }
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Server error');
+            }
+        })
+        .catch(() => {
             resendBtn.disabled = false;
             resendBtn.textContent = 'Resend code';
+            alert('Failed to resend. Please check your connection.');
         });
     }
 </script>
