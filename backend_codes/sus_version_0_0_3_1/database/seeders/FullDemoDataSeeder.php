@@ -706,51 +706,64 @@ class FullDemoDataSeeder extends Seeder
     public function generateDemoStudentData(int $studentId, int $groupId): void
     {
         $possibleGrades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C'];
+        
+        // 1. Fetch all necessary data upfront
         $subjects = DB::table('subjects_groups_bridge_table')
             ->where('group_id', $groupId)
             ->pluck('subject_id');
+    
         $sessionIds = DB::table('timetable')
             ->join('subjects_groups_bridge_table as bridge', 'timetable.subject_group_id', '=', 'bridge.subject_group_id')
             ->where('bridge.group_id', $groupId)
             ->pluck('timetable.session_id')
-            ->all();
-
-        // Grades
+            ->toArray();
+    
+        if (empty($sessionIds)) return;
+    
+        // 2. Generate Attendance first so we can use the real % for grades
+        $attendanceData = [];
+        $numRecords = rand(20, 30);
+        $presentCount = 0;
+    
+        for ($i = 0; $i < $numRecords; $i++) {
+            $isPresent = rand(1, 100) <= 88;
+            if ($isPresent) $presentCount++;
+    
+            $attendanceData[] = [
+                'student_id'   => $studentId,
+                'session_id'   => $sessionIds[array_rand($sessionIds)],
+                'session_date' => now()->subDays(rand(1, 60)),
+                'is_present'   => $isPresent,
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ];
+        }
+    
+        // Bulk Insert Attendance
+        DB::table('attendance')->insert($attendanceData);
+        $actualAttendancePercent = round(($presentCount / $numRecords) * 100);
+    
+        // 3. Generate Grades using the calculated attendance percentage
+        $gradeData = [];
         foreach ($subjects as $subjId) {
-            $perc = rand(76, 97);
-            DB::table('grades')->insert([
+            $gradeData[] = [
                 'student_id' => $studentId,
                 'subject_id' => $subjId,
                 'grade'      => $possibleGrades[array_rand($possibleGrades)],
                 'points'     => round(rand(30, 40) / 10, 1),
-                'percentage' => $perc,
-                'attendance' => rand(80, 98),
+                'percentage' => rand(76, 97),
+                'attendance' => $actualAttendancePercent, // Matches the real data now
                 'created_at' => now(),
-            ]);
+                'updated_at' => now(),
+            ];
         }
-
-        // Attendance (20–30 records, ~88% present)
-        $num = rand(20, 30);
-        for ($i = 0; $i < $num; $i++) {
-            if (empty($sessionIds)) {
-                break;
-            }
-
-            DB::table('attendance')->insert([
-                'student_id'   => $studentId,
-                'session_id'   => $sessionIds[array_rand($sessionIds)],
-                'session_date' => now()->subDays(rand(1, 60)),
-                'is_present'   => rand(1, 100) <= 88,
-            ]);
-        }
-
-        // Recalculate real attendance %
-        $total   = DB::table('attendance')->where('student_id', $studentId)->count();
-        $present = DB::table('attendance')->where('student_id', $studentId)->where('is_present', true)->count();
-        $percent = $total > 0 ? round(($present / $total) * 100) : 88;
-
+    
+        // Bulk Insert Grades
+        DB::table('grades')->insert($gradeData);
+    
+        // 4. Update the Student record
         DB::table('students')
             ->where('student_id', $studentId)
-            ->update(['attendance_percentage' => $percent]);
+            ->update(['attendance_percentage' => $actualAttendancePercent]);
     }
 }
