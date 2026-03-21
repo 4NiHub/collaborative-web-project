@@ -15,17 +15,19 @@ class EnsureTwoFactorAuthenticated
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // If fully authenticated, skip 2FA page
+        // 1. If the user is ALREADY fully logged in, they shouldn't be here.
         if (auth()->check()) {
             return redirect()->route('dashboard');
         }
-
-        // Must have a pending 2FA session
-        if (! $request->session()->has('2fa_user_id')) {
-            return redirect()->route('login')
-                ->with('error', 'Please sign in first.');
+    
+        // 2. If there is NO 2FA session, they shouldn't be here.
+        if (!$request->session()->has('2fa_user_id')) {
+            return redirect()->route('login')->with('error', 'Please sign in first.');
         }
-
+    
+        // 3. IMPORTANT: Prevent session bloat. 
+        // If the request is a standard GET request to the 2FA page, 
+        // just let it through.
         return $next($request);
     }
 }
