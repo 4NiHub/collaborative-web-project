@@ -20,9 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
         ]);
 
-        $middleware->web(append: [
-            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-        ]);
+        // $middleware->web(append: [
+        //     \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
