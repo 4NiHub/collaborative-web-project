@@ -176,6 +176,15 @@
 
     <form id="registerForm" method="POST" action="{{ route('register.submit') }}">
         @csrf
+        @if ($errors->any())
+            <div class="alert alert-error" style="background:#fef2f2; color:#991b1b; padding:12px; border-radius:8px; margin-bottom:20px;">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <input type="hidden" name="role" id="roleInput" value="student">
 
