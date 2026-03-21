@@ -119,18 +119,16 @@ class RegisterController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
-            Log::error('Registration failed', [
-                'email'     => $request->email,
-                'role'      => $request->role,
-                'error'     => $e->getMessage(),
-                'trace'     => $e->getTraceAsString(),
-                'input'     => $request->except('password')
+        
+            // Log the real error so you can see it in DO logs
+            \Log::error('Registration crashed', [
+                'email' => $request->email,
+                'role'  => $request->role,
+                'error' => $e->getMessage()
             ]);
         
-            // This will show the real error to you during development
             return back()
-                ->withErrors(['error' => 'Registration failed: ' . $e->getMessage()])
+                ->withErrors(['registration' => 'Registration failed: ' . $e->getMessage()])
                 ->withInput();
         }
     }
