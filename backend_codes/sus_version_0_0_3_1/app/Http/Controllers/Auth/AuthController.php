@@ -89,6 +89,9 @@ class AuthController extends Controller
             '2fa_expires_at' => $expiresAt,
         ]);
 
+        // ADD THIS LINE
+        $request->session()->save();
+
         return redirect()->route('2fa.verify');
     }
 

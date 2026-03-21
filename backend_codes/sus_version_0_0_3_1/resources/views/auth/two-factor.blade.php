@@ -427,9 +427,9 @@
         fetch('{{ route("2fa.resend") }}', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Content-Type': 'application/json',
-                'Accept': 'application/json' // Add this to force JSON errors
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                // 'Accept': 'application/json' // Add this to force JSON errors
             },
         })
         .then(response => {
