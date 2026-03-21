@@ -4,15 +4,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\NewsController;
 
-// ====================== HELPERS ======================
-function formatStudentId($id) {
-    return '2024' . str_pad($id, 5, '0', STR_PAD_LEFT);
-}
-
-function formatStuId($id) {
-    return 'STU' . str_pad($id, 3, '0', STR_PAD_LEFT);
-}
-
 // ====================== ANALYTICS HELPERS (ported from Python) ======================
 function calculateGPA($studentId) {
     $data = DB::table('grades')
@@ -203,9 +194,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 return response()->json(['error' => 'Student profile not found'], 404);
             }
 
-            // Helper functions – define them here or move to a helper file
-            $formatStudentId = fn($id) => '2024' . str_pad($id, 5, '0', STR_PAD_LEFT);
-
             // GPA calculation – simplified version (you can keep your original logic)
             $gpa = DB::table('grades')
                 ->join('subjects', 'grades.subject_id', '=', 'subjects.subject_id')
@@ -222,7 +210,7 @@ Route::middleware('auth:sanctum')->group(function () {
                     'firstName'            => $student->name ?? '—',
                     'lastName'             => $student->surname ?? '—',
                     'email'                => $user->email ?? '—',
-                    'studentId'            => $formatStudentId($student->student_id),
+                    'studentId'            => formatStudentId($student->student_id),
                     'programme'            => $student->group->group_name ?? 'BSc Computer Science',
                     'year'                 => $student->entry_year ?? '—',
                     'gpa'                  => round($gpa, 2),
