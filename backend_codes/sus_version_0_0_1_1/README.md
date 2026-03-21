@@ -1,0 +1,1 @@
+* The first version of  **Smart University System (SUS)** in where the connection of backend and frontend has been established, but backend relies on api.js Mock Test data to represent the working process of frontend.
