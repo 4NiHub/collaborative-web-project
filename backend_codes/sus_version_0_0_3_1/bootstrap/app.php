@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,12 +12,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // 1. Trust all proxies (Critical for DigitalOcean Load Balancers)
         $middleware->trustProxies(at: '*');
+
+        // 2. Register your custom role middleware
         $middleware->alias([
             'student' => \App\Http\Middleware\EnsureIsStudent::class,
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
-    }) // <--- Ensure this is the ONLY closing brace for middleware
+
+        // 3. Disable CSRF for API and Logout to stop 419 errors
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'logout',
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })

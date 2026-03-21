@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // 1. Force HTTPS on DigitalOcean/Production
         if (config('app.env') === 'production' || config('app.env') === 'staging') {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
+            \URL::forceScheme('https');
         }
 
         // 2. Register the macro for ALL environments (so it doesn't crash on DO)

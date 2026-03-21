@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.origin + '/api';
+const API_BASE_URL = 'https://smart-university.site/api';
 
 // ==================== CORE HELPERS ====================
 function getToken()        { return localStorage.getItem('userToken'); }
@@ -9,9 +9,14 @@ function getRole()         { return localStorage.getItem('userRole'); }   // "st
 // Unified apiCall (used by both roles)
 async function apiCall(endpoint, options = {}) {
     const token = getToken();
+    // Get CSRF token from the meta tag once
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     const headers = {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        // Add CSRF to EVERY call by default
+        'X-CSRF-TOKEN': csrfToken, 
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers
     };
