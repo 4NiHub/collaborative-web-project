@@ -32,11 +32,13 @@ class AuthController extends Controller
     //     return view('auth.login');
     // }
 
-    public function showLogin() {
-        // If the user is fully authenticated, send them to dashboard
-        if (Auth::check()) {
+    public function showLogin(Request $request) {
+        // ONLY redirect to dashboard if authenticated AND there is no 'reason' (like session_expired)
+        if (Auth::check() && !$request->has('reason')) {
             return redirect()->route('dashboard');
         }
+        
+        // If reason=session_expired is present, we stay here and let them log in again
         return view('auth.login');
     }
 
@@ -329,24 +331,22 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     public function logout(Request $request)
     {
-        // 1. Log out from the Web Guard
-        Auth::guard('web')->logout();
-
-        // 2. IMPORTANT: Revoke the API token if it exists
-        if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
+        // Revoke ALL tokens for this user if we can find them
+        if ($user = Auth::user()) {
+            $user->tokens()->delete();
         }
 
-        // 3. Destroy the session and the CSRF token
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // 4. Clear the 2FA leftover data just in case
-        $request->session()->forget(['2fa_user_id', '2fa_email', '2fa_expires_at']);
+        // If it's an API call, return JSON so the JS knows it worked
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return redirect()->route('login');
     }
-
     // ─────────────────────────────────────────────
     //  HELPER
     // ─────────────────────────────────────────────

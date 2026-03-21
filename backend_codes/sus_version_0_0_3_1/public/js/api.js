@@ -29,7 +29,8 @@ async function apiCall(endpoint, options = {}) {
 
     if (response.status === 401) {
         localStorage.clear();
-        window.location.href = '/login';
+        // Use a query param to tell the login page NOT to redirect back to dashboard
+        window.location.href = '/login?reason=session_expired'; 
         return null;
     }
 
@@ -88,20 +89,19 @@ const AuthAPI = {
         localStorage.removeItem('darkMode');
 
         try {
-            // Simple logout call. If it fails, we don't care because local is clear.
             await fetch('/logout', { 
                 method: 'POST', 
                 headers: { 
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json', // Added
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                 } 
             });
-        } catch (err) {
-            console.warn("Server logout failed, but local session cleared.");
+        } finally {
+            // Use finally to ensure we ALWAYS redirect to login even if the network fails
+            window.location.href = '/login';
         }
-
-        window.location.href = '/login';
     }
 };
 
