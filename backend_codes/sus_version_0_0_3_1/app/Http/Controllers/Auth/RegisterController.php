@@ -76,24 +76,22 @@ class RegisterController extends Controller
     
                 Log::info("New student {$student->student_id} in Group {$group->group_id} with full demo data");
             } else {
-                $departments = ['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security'];
-                $bios = ['algorithms', 'cybersecurity', 'web development', 'data science'];
-                // Teacher logic (unchanged – already looks good)
+                // Teacher – exactly the same creation + assignment flow
                 $mentorId = DB::table('mentors')->insertGetId([
-                    'user_id'       => $user->user_id,
-                    'name'          => $request->name,
-                    'surname'       => $request->surname,
-                    'email'         => $request->email,
-                    'phone_number'  => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
-                    'department'    => $departments[array_rand($departments)],
+                    'user_id' => $user->user_id,
+                    'name' => $request->name,
+                    'surname' => $request->surname,
+                    'email' => $request->email,
+                    'phone_number' => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
+                    'department' => \fake()->randomElement(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
                     'office_location' => 'Block ' . chr(rand(65,68)) . ', Room ' . rand(100,300),
-                    'office_hours'  => 'Mon 14:00–16:00, Wed 10:00–12:00',
-                    'bio'           => 'Expert in ' . $bios[array_rand($bios)] . ' with over 10 years experience.',
-                    'nationality'   => 'British',
-                    'languages'     => 'English',
-                    'profile_data'  => json_encode([
-                        'experience' => [['title' => 'Senior Lecturer', 'org' => 'SUS', 'period' => '2020 - Present', 'desc' => 'Core module delivery']],
-                        'education'  => [['degree' => 'PhD Computer Science', 'school' => 'University of Manchester', 'period' => '2015']]
+                    'office_hours' => 'Mon 14:00–16:00, Wed 10:00–12:00',
+                    'bio' => 'Expert in ' . \fake()->randomElement(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
+                    'nationality' => 'British',
+                    'languages' => 'English',
+                    'profile_data' => json_encode([
+                        'experience' => [[ 'title' => 'Senior Lecturer', 'org' => 'SUS', 'period' => '2020 - Present', 'desc' => 'Core module delivery' ]],
+                        'education' => [[ 'degree' => 'PhD Computer Science', 'school' => 'University of Manchester', 'period' => '2015' ]]
                     ])
                 ], 'mentor_id');
     

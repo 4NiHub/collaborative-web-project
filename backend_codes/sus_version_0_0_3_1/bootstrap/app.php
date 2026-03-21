@@ -22,12 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
     // REMOVE the $middleware->web(append: [...]) block entirely. 
     // Laravel 11 handles CSRF automatically for the web group.
-})
+    })
 
         // $middleware->web(append: [
         //     \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         // ]);
-    })
+    // })
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
