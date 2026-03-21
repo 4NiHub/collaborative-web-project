@@ -366,15 +366,22 @@
                 return;
             }
 
-            // 3. Now it is safe to parse JSON
+            // 3. Parse JSON
             const data = await response.json();
 
-            if (result.success && result.token) {
-                localStorage.setItem('userToken', result.token);
-                console.log('Token saved:', result.token.substring(0, 15) + '...');
-                window.location.href = result.redirect || '/dashboard';
+            // Check 'data' (not 'result')
+            if (data.success && data.token) {
+                // Save the token so api.js can find it
+                localStorage.setItem('userToken', data.token);
+                
+                // Optional: Save role if your dashboard needs it
+                localStorage.setItem('userRole', data.role);
+
+                // Now redirect
+                window.location.href = data.redirect || '/dashboard';
             } else {
-                alert(result.message || 'Verification failed');
+                // Handle validation errors (like wrong code)
+                alert(data.message || 'Verification failed');
             }
         } catch (err) {
             console.error('2FA error:', err);
