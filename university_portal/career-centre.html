@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Center - University Management System</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 60px;
+            background: #2563eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .sidebar-icon:hover,
+        .sidebar-icon.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .sidebar-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .theme-toggle {
+            margin-top: auto;
+        }
+
+                /* Sidebar Tooltips */
+        .sidebar-icon {
+            position: relative;
+        }
+
+        .sidebar-icon::after {
+           content: attr(data-tooltip);
+           position: absolute;
+           left: 70px;
+           top: 50%;
+           transform: translateY(-50%);
+           background: #1e293b;
+           color: white;
+           padding: 8px 12px;
+           border-radius: 6px;
+           font-size: 13px;
+           font-weight: 500;
+           white-space: nowrap;
+           opacity: 0;
+           pointer-events: none;
+           transition: opacity 0.2s, left 0.2s;
+           z-index: 1000;
+        }
+
+      .sidebar-icon::before {
+            content: '';
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: #1e293b;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, left 0.2s;
+            z-index: 1000;
+       }
+
+       .sidebar-icon:hover::after {
+          opacity: 1;
+          left: 75px;
+        }
+
+       .sidebar-icon:hover::before {
+           opacity: 1;
+           left: 65px;
+        }
+
+        /* Dark mode tooltip colors */
+        body.dark-mode .sidebar-icon::after {
+           background: #334155;
+        }
+
+        body.dark-mode .sidebar-icon::before {
+           border-right-color: #334155;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 60px;
+            padding: 20px;
+            max-width: 1400px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .share-btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Two Column Layout */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Job Listings */
+        .jobs-section {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-header svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .job-card {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .job-card:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .job-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .job-company {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .job-company svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .job-type {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .type-internship {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .type-fulltime {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .job-description {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .job-footer {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .job-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .job-meta svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Events Section */
+        .events-section {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .event-card {
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .event-card:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .event-date {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .event-location {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .event-location svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .event-description {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .register-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Job Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .detail-text {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirements-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .requirements-list li svg {
+            width: 20px;
+            height: 20px;
+            color: #10b981;
+            flex-shrink: 0;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .skill-tag {
+            padding: 6px 12px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .apply-button {
+            width: 100%;
+            padding: 14px;
+            background: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .apply-button:hover {
+            background: #1e293b;
+        }
+
+        .deadline-notice {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark-mode {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .sidebar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .top-bar,
+        body.dark-mode .jobs-section,
+        body.dark-mode .events-section,
+        body.dark-mode .modal-content {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .job-card,
+        body.dark-mode .event-card {
+            border-color: #334155;
+            background: #1e293b;
+        }
+
+        body.dark-mode .job-card:hover,
+        body.dark-mode .event-card:hover {
+            background: #334155;
+        }
+
+        body.dark-mode .job-title,
+        body.dark-mode .event-title,
+        body.dark-mode .page-title,
+        body.dark-mode h1,
+        body.dark-mode h2,
+        body.dark-mode h3 {
+            color: #f1f5f9;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-icon" data-page="dashboard" data-tooltip="Dashboard">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="timetable" data-tooltip="Timetable">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="modules" data-tooltip="My Modules">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="news" data-tooltip="News">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"/></svg>
+            </div>
+            <div class="sidebar-icon active" data-page="career" data-tooltip="Career Center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+            </div>
+            <div class="sidebar-icon" data-page="contact" data-tooltip="Contact">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <div class="sidebar-icon theme-toggle" data-tooltip="Toggle Theme">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2c-1.05 0-2.05.16-3 .46 4.06 1.27 7 5.06 7 9.54 0 4.48-2.94 8.27-7 9.54.95.3 1.95.46 3 .46 5.52 0 10-4.48 10-10S14.52 2 9 2z"/></svg>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <h1 class="page-title">Smart University System</h1>
+            </div>
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Career Center</h1>
+                <p>Explore job opportunities and career events</p>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Job Listings -->
+                <div class="jobs-section">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        <h2>Job Listings</h2>
+                    </div>
+
+                    <!-- Job 1 -->
+                    <div class="job-card" onclick="openJobModal()">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">Software Engineer Intern</h3>
+                                <div class="job-company">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                                    Tech Solutions Inc.
+                                </div>
+                            </div>
+                            <div class="job-type type-internship">Internship</div>
+                        </div>
+                        <p class="job-description">
+                            Looking for talented software engineering students for summer internship program. 
+                            You will work directly with our senior engineers on real-world projects that impact millions of users...
+                        </p>
+                        <div class="job-footer">
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                San Francisco, CA
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                $25-30/hr
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                Posted 2 days ago
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job 2 -->
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">Full Stack Developer</h3>
+                                <div class="job-company">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                                    Digital Innovations
+                                </div>
+                            </div>
+                            <div class="job-type type-fulltime">Full-time</div>
+                        </div>
+                        <p class="job-description">
+                            Join our team building cutting-edge web applications. 
+                            Experience with at least one modern programming language (Java, Python, C++, or Go)...
+                        </p>
+                        <div class="job-footer">
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                New York, NY
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                $80k-100k/year
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                Posted 1 week ago
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job 3 -->
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">Data Analyst Intern</h3>
+                                <div class="job-company">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                                    Analytics Pro
+                                </div>
+                            </div>
+                            <div class="job-type type-internship">Internship</div>
+                        </div>
+                        <p class="job-description">
+                            Seeking data analytics enthusiasts to join our analytics team. 
+                            Analyze large datasets to derive insights that drive business decisions...
+                        </p>
+                        <div class="job-footer">
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                Remote
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                $22-28/hr
+                            </div>
+                            <div class="job-meta">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                                Posted 3 days ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Section -->
+                <div class="events-section">
+                    <div class="section-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                        <h2>Upcoming Events</h2>
+                    </div>
+
+                    <!-- Event 1 -->
+                    <div class="event-card">
+                        <div class="event-date">February 15, 2026</div>
+                        <h3 class="event-title">Career Fair 2026</h3>
+                        <div class="event-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Main Hall
+                        </div>
+                        <p class="event-description">
+                            Meet with 50+ employers from various industries
+                        </p>
+                        <button class="register-btn">Register Now</button>
+                    </div>
+
+                    <!-- Event 2 -->
+                    <div class="event-card">
+                        <div class="event-date">February 1, 2026</div>
+                        <h3 class="event-title">Resume Workshop</h3>
+                        <div class="event-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Career Center Room 101
+                        </div>
+                        <p class="event-description">
+                            Learn how to create an impressive resume
+                        </p>
+                        <button class="register-btn">Register Now</button>
+                    </div>
+
+                    <!-- Event 3 -->
+                    <div class="event-card">
+                        <div class="event-date">March 5, 2026</div>
+                        <h3 class="event-title">Tech Interview Prep</h3>
+                        <div class="event-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Online
+                        </div>
+                        <p class="event-description">
+                            Practice coding interviews with industry professionals
+                        </p>
+                        <button class="register-btn">Register Now</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Job Detail Modal -->
+    <div class="modal" id="jobModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="flex: 1;">
+                    <div class="job-type type-internship" style="display: inline-block; margin-bottom: 12px;">Internship</div>
+                    <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Software Engineer Intern</h2>
+                    <div class="job-company" style="font-size: 15px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                        Tech Solutions Inc.
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeJobModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="deadline-notice">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg>
+                    Application deadline: Rolling basis
+                </div>
+
+                <div class="detail-section">
+                    <h3>About the Role</h3>
+                    <p class="detail-text">
+                        Tech Solutions Inc. is seeking highly motivated Software Engineer interns to join our dynamic engineering team 
+                        for Summer 2026. As an intern, you will work directly with our senior engineers on real-world projects that impact 
+                        millions of users. You will gain hands-on experience in full-cycle software development, from design and coding 
+                        to testing and deployment. This is a unique opportunity to learn from industry experts and contribute to 
+                        innovative solutions in cloud computing and distributed systems.
+                    </p>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Requirements</h3>
+                    <ul class="requirements-list">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Currently pursuing a BS or MS in Computer Science or related field.
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Strong understanding of data structures, algorithms, and object-oriented programming.
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Experience with at least one modern programming language (Java, Python, C++, or Go).
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Familiarity with version control systems (Git).
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Ability to work 40 hours per week for 12 weeks.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="detail-section">
+                    <h3>Skills Required</h3>
+                    <div class="skills-container">
+                        <div class="skill-tag">Java/Python</div>
+                        <div class="skill-tag">React</div>
+                        <div class="skill-tag">Git</div>
+                        <div class="skill-tag">SQL</div>
+                        <div class="skill-tag">REST APIs</div>
+                        <div class="skill-tag">Problem Solving</div>
+                        <div class="skill-tag">Communication</div>
+                        <div class="skill-tag">Teamwork</div>
+                        <div class="skill-tag">Adaptability</div>
+                        <div class="skill-tag">Time Management</div>
+                    </div>
+                </div>
+
+                <button class="apply-button">Apply Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // Theme toggle with localStorage persistence
+       function initTheme() {
+       // Check if dark mode was previously enabled
+          if (localStorage.getItem('darkMode') === 'enabled') {
+              document.body.classList.add('dark-mode');
+            }
+        }
+
+        // Initialize theme on page load
+        initTheme();
+
+        // Theme toggle button
+      document.querySelector('.theme-toggle').addEventListener('click', function() {
+          document.body.classList.toggle('dark-mode');
+    
+          // Save preference to localStorage
+          if (document.body.classList.contains('dark-mode')) {
+              localStorage.setItem('darkMode', 'enabled');
+          } else {
+              localStorage.setItem('darkMode', 'disabled');
+          }
+        });
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-icon[data-page]').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const page = this.dataset.page;
+                const pageMap = {
+                    'dashboard': 'dashboard.html',
+                    'timetable': 'timetable.html',
+                    'modules': 'modules.html',
+                    'news': 'news.html',
+                    'career': 'career-centre.html',
+                    'contact': 'contact.html'
+                };
+                
+                if (pageMap[page]) {
+                    window.location.href = pageMap[page];
+                }
+            });
+        });
+
+        // Open job modal
+        function openJobModal() {
+            document.getElementById('jobModal').classList.add('active');
+        }
+
+        // Close job modal
+        function closeJobModal() {
+            document.getElementById('jobModal').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('jobModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeJobModal();
+            }
+        });
+    </script>
+</body>
+</html>
