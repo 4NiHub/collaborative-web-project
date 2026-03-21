@@ -18,10 +18,16 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     //  SHOW LOGIN
     // ─────────────────────────────────────────────
-    public function showLogin()
-    {
-        if (Auth::check()) {
+    // AuthController.php
+
+    public function showLogin() {
+        // If already logged in, go to dashboard
+        if (auth()->check()) {
             return redirect()->route('dashboard');
+        }
+        // If 2FA is pending, go to 2FA page
+        if (session()->has('2fa_user_id')) {
+            return redirect()->route('2fa.verify');
         }
         return view('auth.login');
     }
