@@ -76,6 +76,8 @@ class RegisterController extends Controller
     
                 Log::info("New student {$student->student_id} in Group {$group->group_id} with full demo data");
             } else {
+                $departments = ['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security'];
+                $bios = ['algorithms', 'cybersecurity', 'web development', 'data science'];
                 // Teacher logic (unchanged – already looks good)
                 $mentorId = DB::table('mentors')->insertGetId([
                     'user_id'       => $user->user_id,
@@ -83,10 +85,10 @@ class RegisterController extends Controller
                     'surname'       => $request->surname,
                     'email'         => $request->email,
                     'phone_number'  => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
-                    'department'    => fake()->randomElement(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
+                    'department'    => $departments[array_rand($departments)],
                     'office_location' => 'Block ' . chr(rand(65,68)) . ', Room ' . rand(100,300),
                     'office_hours'  => 'Mon 14:00–16:00, Wed 10:00–12:00',
-                    'bio'           => 'Expert in ' . fake()->randomElement(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
+                    'bio'           => 'Expert in ' . $bios[array_rand($bios)] . ' with over 10 years experience.',
                     'nationality'   => 'British',
                     'languages'     => 'English',
                     'profile_data'  => json_encode([
