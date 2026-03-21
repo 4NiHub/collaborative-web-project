@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = window.location.origin + '/api';
 
 // ==================== CORE HELPERS ====================
 function getToken()        { return localStorage.getItem('userToken'); }
@@ -69,38 +69,38 @@ const AuthAPI = {
             method: 'POST',
             body: JSON.stringify({ email, password })
         });
-        if (response?.token) {
-            saveToken(response.data.token);
-            localStorage.setItem('userRole', response.role);   // ← IMPORTANT
+
+        // FIX: response IS the object, not response.data
+        if (response && response.token) {
+            saveToken(response.token); 
+            localStorage.setItem('userRole', response.role);
+            return response;
         }
-        return response;
+        throw new Error("Invalid response from server");
     },
 
     logout: async function() {
-        // 1. Clear Local Storage IMMEDIATELY so the UI feels responsive
-        // and no "ghost" tokens remain for the next login.
         const token = getToken();
+        
+        // Clear local storage FIRST
         deleteToken();
         localStorage.removeItem('userRole');
         localStorage.removeItem('darkMode');
 
         try {
-            // 2. Attempt to tell the server to kill the session
-            // We use a timeout or a catch because if the session is already dead,
-            // this will throw a 419, and we don't want that to stop the redirect.
+            // Simple logout call. If it fails, we don't care because local is clear.
             await fetch('/logout', { 
                 method: 'POST', 
                 headers: { 
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                     'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
                     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                 } 
             });
         } catch (err) {
-            console.warn("Server logout failed, but local session cleared.", err);
+            console.warn("Server logout failed, but local session cleared.");
         }
 
-        // 3. Hard redirect to login to reset all JS states
         window.location.href = '/login';
     }
 };

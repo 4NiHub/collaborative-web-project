@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,22 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Fix for DigitalOcean Load Balancers
         $middleware->trustProxies(at: '*');
-        
-        // Define your custom role aliases
         $middleware->alias([
             'student' => \App\Http\Middleware\EnsureIsStudent::class,
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
-        
-        // Removed the manual CSRF append because Laravel 11 includes it by default
-    }) // This correctly closes withMiddleware
+    }) // <--- Ensure this is the ONLY closing brace for middleware
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
     ->booting(function ($app) {
-        // This is the safe way to force the storage path on DigitalOcean
         $app->useStoragePath($app->basePath() . '/storage');
     })
     ->create();
