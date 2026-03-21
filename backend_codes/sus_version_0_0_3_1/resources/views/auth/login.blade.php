@@ -344,9 +344,72 @@
         </div>
     </form>
 
-    <div class="divider"><p>SECURED WITH 2FA</p></div>
+    <div class="divider"><p>SECURED PORTAL ACCESS</p></div>
 
 <script>
+    // Password toggle
+    const togglePw = document.getElementById('togglePw');
+    const pwInput  = document.getElementById('password');
+    const eyeIcon  = document.getElementById('eyeIcon');
+    const eyeOff = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    const eyeOn  = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+
+    togglePw.addEventListener('click', () => {
+        const shown = pwInput.type === 'text';
+        pwInput.type = shown ? 'password' : 'text';
+        eyeIcon.innerHTML = shown ? eyeOn : eyeOff;
+    });
+
+    // Handle AJAX Login
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Prevent standard page reload
+        
+        const btn = document.getElementById('submitBtn');
+        const form = this;
+        const formData = new FormData(form);
+
+        // UI Loading State
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // 1. Store token for any future API calls
+                localStorage.setItem('auth_token', data.token);
+                localStorage.setItem('user_role', data.role);
+
+                // 2. Direct Redirect to Dashboard
+                window.location.href = data.redirect;
+            } else {
+                // Handle Validation Errors or Login Failures
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                
+                // If there's a specific error message (like "Too many attempts")
+                alert(data.message || data.errors?.email?.[0] || 'Login failed. Please check credentials.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            alert('A connection error occurred. Please try again.');
+        }
+    });
+</script>
+
+{{-- <script>
     // Password toggle
     const togglePw = document.getElementById('togglePw');
     const pwInput  = document.getElementById('password');
@@ -366,6 +429,6 @@
         btn.classList.add('loading');
         btn.disabled = true;
     });
-</script>
+</script> --}}
 </body>
 </html>

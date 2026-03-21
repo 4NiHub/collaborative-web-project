@@ -28,12 +28,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-// ── Two-Factor Authentication Routes ─────────────────────────────────────────
-Route::middleware('2fa.pending')->group(function () {
-    Route::get('/two-factor', [AuthController::class, 'show2FA'])->name('2fa.verify');
-    Route::post('/two-factor', [AuthController::class, 'verify2FA'])->name('2fa.verify.submit');
-    Route::post('/two-factor/resend', [AuthController::class, 'resend2FA'])->name('2fa.resend');
-});
+// // ── Two-Factor Authentication Routes ─────────────────────────────────────────
+// Route::middleware('2fa.pending')->group(function () {
+//     Route::get('/two-factor', [AuthController::class, 'show2FA'])->name('2fa.verify');
+//     Route::post('/two-factor', [AuthController::class, 'verify2FA'])->name('2fa.verify.submit');
+//     Route::post('/two-factor/resend', [AuthController::class, 'resend2FA'])->name('2fa.resend');
+// });
 
 // ── Protected Routes ─────────────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {

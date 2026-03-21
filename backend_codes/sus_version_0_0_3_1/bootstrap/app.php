@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'student' => \App\Http\Middleware\EnsureIsStudent::class,
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
-            '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
+            // '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
         ]);
 
     // REMOVE the $middleware->web(append: [...]) block entirely. 
