@@ -40,14 +40,18 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard — role-aware view selection
     Route::get('/dashboard', function () {
-        $roleId = auth()->user()->role_id;
-        
-        return match($roleId) {
+        $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        return match((int)$user->role_id) {
             1 => view('dashboard'),
             2 => view('teacher.dashboard'),
             default => view('dashboard')->with('error', 'Unsupported role'),
         };
-    })->name('dashboard');
+    });
 
     // ── Student-only ─────────────────────────────────────────────────────────
     Route::middleware('student')->group(function () {
