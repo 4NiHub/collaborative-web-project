@@ -12,21 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Fix for DigitalOcean Load Balancers
         $middleware->trustProxies(at: '*');
-    
+        
+        // Define your custom role aliases
         $middleware->alias([
             'student' => \App\Http\Middleware\EnsureIsStudent::class,
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
-
-    // REMOVE the $middleware->web(append: [...]) block entirely. 
-    // Laravel 11 handles CSRF automatically for the web group.
-    })
-
-        // $middleware->web(append: [
-        //     \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-        // ]);
-    // })
+        
+        // Removed the manual CSRF append because Laravel 11 includes it by default
+    }) // This correctly closes withMiddleware
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })
