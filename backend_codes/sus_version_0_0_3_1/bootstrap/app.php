@@ -13,10 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'student' => \App\Http\Middleware\EnsureIsStudent::class,
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
+
         $middleware->web(append: [
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         ]);
@@ -25,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->booting(function ($app) {
-        // This forces the storage path to be correct relative to your DO subfolder
+        // This is the safe way to force the storage path on DigitalOcean
         $app->useStoragePath($app->basePath() . '/storage');
     })
     ->create();
