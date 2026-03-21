@@ -347,12 +347,27 @@
                 method: 'POST',
                 body: new FormData(this),
                 headers: {
-                    'Accept': 'application/json',
-                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'Accept': 'application/json'
                 }
             });
 
-            const result = await response.json();
+            // 1. Handle the 419 (CSRF/Session Expired) error gracefully
+            if (response.status === 419) {
+                alert("Your security session expired. The page will now refresh.");
+                window.location.reload();
+                return;
+            }
+
+            // 2. Handle 500 (Server Error) so you don't try to parse broken JSON
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Server Error:", errorText);
+                alert("Something went wrong on the server. Please try again.");
+                return;
+            }
+
+            // 3. Now it is safe to parse JSON
+            const data = await response.json();
 
             if (result.success && result.token) {
                 localStorage.setItem('userToken', result.token);

@@ -15,17 +15,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Change this to check if it's NOT local, 
-        // or just force it if you are sure your DO droplet uses SSL
+        // 1. Force HTTPS on DigitalOcean/Production
         if (config('app.env') === 'production' || config('app.env') === 'staging') {
-            URL::forceScheme('https');
+            \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        if (app()->environment('local')) {
-            Response::macro('apiJson', function ($data = [], $status = 200) {
-                return response()->json($data, $status)
-                    ->header('Content-Type', 'application/json; charset=utf-8');
-            });
-        }
+        // 2. Register the macro for ALL environments (so it doesn't crash on DO)
+        \Illuminate\Support\Facades\Response::macro('apiJson', function ($data = [], $status = 200) {
+            return response()->json($data, $status)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        });
     }
 }
