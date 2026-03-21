@@ -134,6 +134,15 @@ class AuthController extends Controller
         if (! Hash::check($request->code, $stored['code_hash'])) {
             RateLimiter::hit($otpThrottle, 60);
             $remaining = 3 - RateLimiter::attempts($otpThrottle);
+            
+            // Return JSON instead of back() if the request wants JSON
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => "Invalid code. {$remaining} attempt(s) remaining."
+                ], 422);
+            }
+            
             return back()->with('error', "Invalid code. {$remaining} attempt(s) remaining.");
         }
 
