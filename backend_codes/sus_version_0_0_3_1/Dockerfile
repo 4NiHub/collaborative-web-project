@@ -1,35 +1,29 @@
-# Use the PHP image that matches your local version (change 8.2 or 8.3 if needed)
 FROM php:8.3-fpm-alpine
 
-# Install system dependencies Laravel usually needs
 RUN apk add --no-cache \
     libzip-dev \
     zip \
     unzip \
     git \
-    && docker-php-ext-install pdo pdo_mysql zip
+    && docker-php-ext-install pdo pgsql pdo_pgsql zip
 
-# Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
-# Copy entire project
 COPY . .
 
-# Give correct ownership & permissions to storage & cache
-# App Platform runs as non-root user (usually uid 1000)
 RUN chown -R 1000:1000 storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && mkdir -p storage/framework/{cache,sessions,views} \
+    && chown -R 1000:1000 storage/framework \
+    && chmod -R 775 storage/framework
 
-# Install Composer dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Cache Laravel stuff (helps performance)
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
-    && php artisan optimize
+    && php artisan optimize --force || true
 
-# Expose port (App Platform ignores this but good practice)
-EXPOSE 9000
+EXPOSE 8080
 
-CMD ["php-fpm"]
+CMD ["heroku-php-apache2", "public/"]
