@@ -347,7 +347,9 @@
                 method: 'POST',
                 body: new FormData(this),
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'application/json', // Force Laravel to return JSON errors
+                    'X-Requested-With': 'XMLHttpRequest', // Tells Laravel this is an AJAX call
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value // Explicit token
                 }
             });
 

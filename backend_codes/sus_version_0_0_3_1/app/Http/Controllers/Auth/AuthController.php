@@ -104,10 +104,10 @@ class AuthController extends Controller
             return redirect()->route('login');
         }
 
-        return response()
-            ->view('auth.two-factor')
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
-            ->header('Pragma', 'no-cache');
+        // Force the session to provide a fresh token specifically for this page
+        session()->regenerateToken(); 
+
+        return view('auth.two-factor');
     }
 
     // ─────────────────────────────────────────────
