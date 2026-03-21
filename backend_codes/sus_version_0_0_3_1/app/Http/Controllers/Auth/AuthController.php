@@ -89,11 +89,13 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     //  SHOW 2FA PAGE
     // ─────────────────────────────────────────────
-    public function show2FA(Request $request)
+    public function show2FA()
     {
-        if (! $request->session()->has('2fa_user_id')) {
+        // Just ensure the session exists, otherwise redirect to login
+        if (!session()->has('2fa_user_id')) {
             return redirect()->route('login');
         }
+    
         return view('auth.two-factor');
     }
 
