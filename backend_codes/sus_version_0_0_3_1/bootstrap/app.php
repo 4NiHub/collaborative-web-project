@@ -5,6 +5,11 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
+    // --- ADD THIS LINE TO FIX THE CACHE PATH ERROR ---
+    ->withConfig([
+        'view.compiled' => realpath(storage_path('framework/views')),
+    ])
+    // -------------------------------------------------
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -12,9 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        
-        // 1. THIS IS THE MOST IMPORTANT PART FOR DIGITAL OCEAN
-        // It tells Laravel to trust the proxy and recognize HTTPS
         $middleware->trustProxies(at: '*');
 
         $middleware->alias([
@@ -22,7 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
 
-        // 2. Ensuring CSRF is active for web routes
         $middleware->web(append: [
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         ]);
