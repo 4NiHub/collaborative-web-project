@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
             2 => view('teacher.dashboard'),
             default => view('dashboard')->with('error', 'Unsupported role'),
         };
-    });
+    })->name('dashboard');
 
     // ── Student-only ─────────────────────────────────────────────────────────
     Route::middleware('student')->group(function () {
