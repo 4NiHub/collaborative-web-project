@@ -343,7 +343,7 @@
         btn.disabled = true;
 
         try {
-            const response = await fetch('{{ route("2fa.verify") }}', {
+            const response = await fetch('{{ route("2fa.verify.submit") }}', {
                 method: 'POST',
                 body: new FormData(this),
                 headers: {
