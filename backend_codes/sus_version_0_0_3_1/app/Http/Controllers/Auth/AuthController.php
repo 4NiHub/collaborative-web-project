@@ -33,7 +33,8 @@ class AuthController extends Controller
     // }
 
     public function showLogin() {
-        if (auth()->check()) {
+        // If the user is fully authenticated, send them to dashboard
+        if (Auth::check()) {
             return redirect()->route('dashboard');
         }
         return view('auth.login');
