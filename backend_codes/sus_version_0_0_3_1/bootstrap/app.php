@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher'     => \App\Http\Middleware\EnsureIsTeacher::class,
 
             // ── Add this line for 2FA pending check
-            '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
+            // '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
             
         ]);
 
