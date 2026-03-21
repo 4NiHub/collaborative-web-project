@@ -69,7 +69,7 @@ const AuthAPI = {
             method: 'POST',
             body: JSON.stringify({ email, password })
         });
-        if (response?.data?.token) {
+        if (response?.token) {
             saveToken(response.data.token);
             localStorage.setItem('userRole', response.role);   // ← IMPORTANT
         }
@@ -77,12 +77,30 @@ const AuthAPI = {
     },
 
     logout: async function() {
-        try {
-            await fetch('/logout', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } });
-        } catch (_) {}
+        // 1. Clear Local Storage IMMEDIATELY so the UI feels responsive
+        // and no "ghost" tokens remain for the next login.
+        const token = getToken();
         deleteToken();
         localStorage.removeItem('userRole');
         localStorage.removeItem('darkMode');
+
+        try {
+            // 2. Attempt to tell the server to kill the session
+            // We use a timeout or a catch because if the session is already dead,
+            // this will throw a 419, and we don't want that to stop the redirect.
+            await fetch('/logout', { 
+                method: 'POST', 
+                headers: { 
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'Accept': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                } 
+            });
+        } catch (err) {
+            console.warn("Server logout failed, but local session cleared.", err);
+        }
+
+        // 3. Hard redirect to login to reset all JS states
         window.location.href = '/login';
     }
 };

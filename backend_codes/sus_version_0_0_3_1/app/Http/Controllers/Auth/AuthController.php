@@ -247,9 +247,21 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     public function logout(Request $request)
     {
-        Auth::logout();
+        // 1. Log out from the Web Guard
+        Auth::guard('web')->logout();
+
+        // 2. IMPORTANT: Revoke the API token if it exists
+        if ($request->user()) {
+            $request->user()->currentAccessToken()->delete();
+        }
+
+        // 3. Destroy the session and the CSRF token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // 4. Clear the 2FA leftover data just in case
+        $request->session()->forget(['2fa_user_id', '2fa_email', '2fa_expires_at']);
+
         return redirect()->route('login');
     }
 
