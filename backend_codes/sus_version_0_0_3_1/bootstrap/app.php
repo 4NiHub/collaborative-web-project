@@ -12,25 +12,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
-            // ── Your custom role middleware (already added earlier)
-            'student'     => \App\Http\Middleware\EnsureIsStudent::class,
-            'teacher'     => \App\Http\Middleware\EnsureIsTeacher::class,
+        
+        // 1. THIS IS THE MOST IMPORTANT PART FOR DIGITAL OCEAN
+        // It tells Laravel to trust the proxy and recognize HTTPS
+        $middleware->trustProxies(at: '*');
 
-            // ── Add this line for 2FA pending check
-            // '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
-            
+        $middleware->alias([
+            'student' => \App\Http\Middleware\EnsureIsStudent::class,
+            'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
         ]);
 
-        // ── ADD THIS ───────────────────────────────────────────────
+        // 2. Ensuring CSRF is active for web routes
         $middleware->web(append: [
             \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         ]);
-    
-        // Exclude CSRF check only for register POST
-        // $middleware->excludeFromCsrfVerification([
-        //     'register',           // matches /register POST
-        // ]);
+        
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
