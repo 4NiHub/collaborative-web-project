@@ -19,10 +19,10 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
+   public function register(Request $request)
     {
         Log::info('Registration attempt started', $request->all());
-
+    
         $validated = $request->validate([
             'name'     => 'required|string|max:200',
             'surname'  => 'required|string|max:200',
@@ -30,106 +30,109 @@ class RegisterController extends Controller
             'password' => 'required|min:6',
             'role'     => 'required|in:student,teacher'
         ]);
-
+    
         DB::beginTransaction();
-        
+    
         try {
-
             $roleId = ($request->role === 'student') ? 1 : 2;
-
+    
             $user = User::create([
                 'role_id'       => $roleId,
                 'email'         => $request->email,
                 'password_hash' => Hash::make($request->password),
                 'creation_time' => now(),
             ]);
-
+    
             // Refresh to get the auto-generated user_id
             $user->refresh();
-
+    
             if ($request->role === 'student') {
                 $groupId = rand(1, 2);
-                $group   = Group::findOrFail($groupId);
-
+                $group = Group::findOrFail($groupId);
+    
                 $phone = '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999);
-
+    
                 $student = Student::create([
-                    'user_id'          => $user->user_id,
-                    'name'             => $request->name,
-                    'surname'          => $request->surname,
-                    'entry_year'       => date('Y'),
-                    'group_id'         => $group->group_id,
-                    'phone_number'     => $phone,
-                    'credits_completed'=> rand(14, 30),
+                    'user_id'              => $user->user_id,
+                    'name'                 => $request->name,
+                    'surname'              => $request->surname,
+                    'entry_year'           => date('Y'),
+                    'group_id'             => $group->group_id,
+                    'phone_number'         => $phone,
+                    'credits_completed'    => rand(14, 30),
                     'attendance_percentage' => 0,
                 ]);
-
-                // === REUSABLE DEMO DATA ===
+    
+                // ── IMPORTANT DEBUG LINE ──
+                Log::info('About to run generateDemoStudentData', [
+                    'student_id' => $student->student_id,
+                    'group_id'   => $group->group_id
+                ]);
+    
                 app(FullDemoDataSeeder::class)->generateDemoStudentData(
-                    $student->student_id, 
+                    $student->student_id,
                     $group->group_id
                 );
-
+    
                 Log::info("New student {$student->student_id} in Group {$group->group_id} with full demo data");
             } else {
-                // Teacher – exactly the same creation + assignment flow
+                // Teacher logic (unchanged – already looks good)
                 $mentorId = DB::table('mentors')->insertGetId([
-                    'user_id' => $user->user_id,
-                    'name' => $request->name,
-                    'surname' => $request->surname,
-                    'email' => $request->email,
-                    'phone_number' => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
-                    'department' => fake()->randomElement(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
+                    'user_id'       => $user->user_id,
+                    'name'          => $request->name,
+                    'surname'       => $request->surname,
+                    'email'         => $request->email,
+                    'phone_number'  => '+44 7' . rand(100,999) . ' ' . rand(100,999) . ' ' . rand(100,999),
+                    'department'    => fake()->randomElement(['Computer Science', 'Mathematics', 'Software Engineering', 'Cyber Security']),
                     'office_location' => 'Block ' . chr(rand(65,68)) . ', Room ' . rand(100,300),
-                    'office_hours' => 'Mon 14:00–16:00, Wed 10:00–12:00',
-                    'bio' => 'Expert in ' . fake()->randomElement(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
-                    'nationality' => 'British',
-                    'languages' => 'English',
-                    'profile_data' => json_encode([
-                        'experience' => [[ 'title' => 'Senior Lecturer', 'org' => 'SUS', 'period' => '2020 - Present', 'desc' => 'Core module delivery' ]],
-                        'education' => [[ 'degree' => 'PhD Computer Science', 'school' => 'University of Manchester', 'period' => '2015' ]]
+                    'office_hours'  => 'Mon 14:00–16:00, Wed 10:00–12:00',
+                    'bio'           => 'Expert in ' . fake()->randomElement(['algorithms', 'cybersecurity', 'web development', 'data science']) . ' with over 10 years experience.',
+                    'nationality'   => 'British',
+                    'languages'     => 'English',
+                    'profile_data'  => json_encode([
+                        'experience' => [['title' => 'Senior Lecturer', 'org' => 'SUS', 'period' => '2020 - Present', 'desc' => 'Core module delivery']],
+                        'education'  => [['degree' => 'PhD Computer Science', 'school' => 'University of Manchester', 'period' => '2015']]
                     ])
                 ], 'mentor_id');
-
-                // ── ONLY THIS PART IS ADJUSTED (keeps exact same data-handling style) ──
-                // Pick truly random subjects that are still unassigned (mentor_id is null)
-                // This prevents stealing subjects that already have timetable in both groups
+    
                 $availableSubjects = DB::table('subjects')
                     ->whereNull('mentor_id')
                     ->pluck('subject_id')
                     ->toArray();
-
+    
                 if (empty($availableSubjects)) {
-                    // fallback to all subjects (same as your original code)
                     $availableSubjects = DB::table('subjects')->pluck('subject_id')->toArray();
                 }
-
-                shuffle($availableSubjects);                    // true random instead of always first N
+    
+                shuffle($availableSubjects);
                 $randomSubjects = array_slice($availableSubjects, 0, rand(2,4));
-
-                // Exactly the same update loop you already had
+    
                 foreach ($randomSubjects as $subjId) {
                     DB::table('subjects')->where('subject_id', $subjId)->update(['mentor_id' => $mentorId]);
                 }
             }
-
+    
             DB::commit();
+    
             return redirect()->route('login')
                 ->with('success', 'Account created! Login to see your populated dashboard 🎉');
-
+    
         } catch (\Exception $e) {
             DB::rollBack();
-        
-            // Log the real error so you can see it in DO logs
-            \Log::error('Registration crashed', [
-                'email' => $request->email,
-                'role'  => $request->role,
-                'error' => $e->getMessage()
+    
+            // ── IMPROVED LOGGING ──
+            Log::error('Registration completely failed', [
+                'email'      => $request->email ?? 'unknown',
+                'role'       => $request->role ?? 'unknown',
+                'error'      => $e->getMessage(),
+                'file'       => $e->getFile(),
+                'line'       => $e->getLine(),
+                'trace'      => $e->getTraceAsString(),
             ]);
-        
+    
+            // Show the real error to the user
             return back()
                 ->withErrors(['registration' => 'Registration failed: ' . $e->getMessage()])
                 ->withInput();
         }
     }
-}
