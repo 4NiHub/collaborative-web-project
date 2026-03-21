@@ -100,12 +100,14 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     public function show2FA()
     {
-        // Just ensure the session exists, otherwise redirect to login
         if (!session()->has('2fa_user_id')) {
             return redirect()->route('login');
         }
-    
-        return view('auth.two-factor');
+
+        return response()
+            ->view('auth.two-factor')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
+            ->header('Pragma', 'no-cache');
     }
 
     // ─────────────────────────────────────────────

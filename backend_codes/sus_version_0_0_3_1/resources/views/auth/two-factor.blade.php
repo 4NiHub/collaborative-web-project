@@ -427,9 +427,9 @@
         fetch('{{ route("2fa.resend") }}', {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                // 'Accept': 'application/json' // Add this to force JSON errors
+                'Accept': 'application/json', // REQUIRED: Prevents HTML error pages
+                'X-Requested-With': 'XMLHttpRequest', // Tells Laravel this is an AJAX call
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
             },
         })
         .then(response => {
