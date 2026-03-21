@@ -28,9 +28,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     
         // Exclude CSRF check only for register POST
-        $middleware->excludeFromCsrfVerification([
-            'register',           // matches /register POST
-        ]);
+        // $middleware->excludeFromCsrfVerification([
+        //     'register',           // matches /register POST
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
