@@ -21,6 +21,16 @@ return Application::configure(basePath: dirname(__DIR__))
             '2fa.pending' => \App\Http\Middleware\EnsureTwoFactorAuthenticated::class,
             
         ]);
+
+        // ── ADD THIS ───────────────────────────────────────────────
+        $middleware->web(append: [
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        ]);
+    
+        // Exclude CSRF check only for register POST
+        $middleware->excludeFromCsrfVerification([
+            'register',           // matches /register POST
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
