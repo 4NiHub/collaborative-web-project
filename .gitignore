@@ -1,0 +1,77 @@
+# ────────────────────────────────────────────────
+# OS / Editor junk
+# ────────────────────────────────────────────────
+*.log
+.DS_Store
+Thumbs.db
+
+# ────────────────────────────────────────────────
+# Environment & secrets (already good)
+# ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+.env.backup
+.env.production
+/auth.json
+
+# ────────────────────────────────────────────────
+# IDE / Editor folders (you have most already)
+# ────────────────────────────────────────────────
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+.phpactor.json
+
+# ────────────────────────────────────────────────
+# Testing & cache artifacts
+# ────────────────────────────────────────────────
+.phpunit.result.cache
+
+# ────────────────────────────────────────────────
+# Laravel / Herd / Local runtime generated
+# ────────────────────────────────────────────────
+/storage/*.key
+/storage/pail
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/testing
+/storage/framework/views
+/storage/logs
+
+# ────────────────────────────────────────────────
+# Frontend build artifacts (Vite / Tailwind / Laravel Mix)
+# ────────────────────────────────────────────────
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/.vite
+/.vite-temp
+
+# ────────────────────────────────────────────────
+# Composer dependencies
+# ────────────────────────────────────────────────
+/vendor
+
+# ────────────────────────────────────────────────
+# Homestead & older tools (you already have)
+# ────────────────────────────────────────────────
+Homestead.json
+Homestead.yaml
+
+# ────────────────────────────────────────────────
+# Optional but very useful additions
+# ────────────────────────────────────────────────
+**/*.backup
+**/*.bak
+**/*.old
+**/*.swp
+**/*.swo
+composer.phar
+yarn-error.log
+yarn-debug.log
+npm-debug.log
