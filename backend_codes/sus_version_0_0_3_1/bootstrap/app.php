@@ -12,12 +12,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // This is the "secret sauce" for Sanctum on production
+        // 1. Critical for Sanctum/SPA Auth on production
         $middleware->statefulApi();
         
-        // Ensure headers are trusted on Digital Ocean
+        // 2. Critical for Digital Ocean Load Balancers
         $middleware->trustProxies(at: '*');
+
+        // 3. Register your custom role middleware aliases (FIXES THE 500 ERROR)
+        $middleware->alias([
+            'student' => \App\Http\Middleware\EnsureIsStudent::class,
+            'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
+        ]);
+
+        // 4. Disable CSRF for API and Logout to stop 419 errors
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'logout',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->create();
