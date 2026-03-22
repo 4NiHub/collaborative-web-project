@@ -1012,6 +1012,7 @@
                 console.error('[Career] Jobs load failed:', err.message);
             }
         }
+        
         // load events
         async function loadEvents() {
             var container = document.getElementById('eventsList');
@@ -1025,32 +1026,45 @@
                 }
 
                 container.innerHTML = '';
-                // Inside loadEvents() find the forEach loop:
+                
                 events.forEach(function(ev) {
                     var card = document.createElement('div');
                     card.className = 'event-card';
                     
-                    // Logic to determine button HTML
+                    // Logic to determine button HTML based on user role
                     let btnHtml = '';
                     if (isTeacher) {
+                        // Amazing green pop style trigger for Staff
                         btnHtml = `<button class="register-btn staff-view" onclick="showStaffNotice()">Staff View Only</button>`;
                     } else {
                         btnHtml = ev.registered
                             ? `<button class="register-btn registered" id="evtBtn_${ev.id}">Registered ✓</button>
-                            <button class="cancel-reg-btn" onclick="cancelEventRegistration(${ev.id})" style="...">Cancel</button>`
+                            <button class="cancel-reg-btn" onclick="cancelEventRegistration(${ev.id})" style="margin-top:6px;width:100%;padding:6px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;font-size:12px;cursor:pointer;">Cancel Registration</button>`
                             : `<button class="register-btn" onclick="registerForEvent(${ev.id}, this)">Register Now</button>`;
                     }
 
                     card.innerHTML = `
                         <div class="event-date">${ev.date}</div>
                         <h3 class="event-title">${ev.title}</h3>
-                        <div class="event-time">...</div>
-                        <div class="event-location">...</div>
-                        <div class="event-spots">Spots available: ${ev.spots || '—'}</div>
+                        <div class="event-time">
+                            <img src="{{ asset('images/clock.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
+                            ${ev.time || '—'}
+                        </div>
+                        <div class="event-location">
+                            <img src="{{ asset('images/pin.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
+                            ${ev.location || '—'}
+                        </div>
+                        <div class="event-spots">Spots available: <span>${ev.spots || '—'}</span></div>
                         ${btnHtml}
                     `;
                     container.appendChild(card);
                 });
+
+            } catch (err) {
+                container.innerHTML = '<div class="state-msg error">Could not load events. Please refresh.</div>';
+                console.error('[Career] Events load failed:', err.message);
+            }
+        }
 
                 // events.forEach(function(ev) {
                 //     var card = document.createElement('div');
