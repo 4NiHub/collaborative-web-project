@@ -558,13 +558,13 @@
                     <img src="{{ asset('images/career.png') }}" alt="Career Center">
                     <span class="sidebar-label">Career Center</span>
                 </div>
-                <div class="sidebar-icon" data-page="help" data-tooltip="Help">
-                     <img src="{{ asset('images/help.png') }}" alt="Help">
-                     <span class="sidebar-label">Help</span>
-                </div>
                 <div class="sidebar-icon" data-page="contact" data-tooltip="Contact">
                     <img src="{{ asset('images/contact.png') }}" alt="Contact">
                     <span class="sidebar-label">Contact</span>
+                </div>
+                <div class="sidebar-icon" data-page="help" data-tooltip="Help">
+                     <img src="{{ asset('images/help.png') }}" alt="Help">
+                     <span class="sidebar-label">Help</span>
                 </div>
                 <div class="sidebar-icon theme-toggle" data-tooltip="Toggle Theme">
                     <img src="{{ asset('images/dark_mode.png') }}" alt="Dark Mode">
