@@ -1224,62 +1224,114 @@ Route::middleware('auth:sanctum')->group(function () {
 // ====================== REAL EVENT REGISTRATION (matches your table) ======================
 
     // REGISTER
+    // Route::post('/career/events/{id}/register', function ($id) {
+    //     try {
+    //         $user = auth()->user();
+    //         if (!$user || !$user->student) {
+    //             return response()->json(['error' => 'Student profile not found'], 404);
+    //         }
+
+    //         $studentId = $user->student->student_id;
+
+    //         // Check if already registered
+    //         $already = DB::table('participants')
+    //             ->where('event_id', $id)
+    //             ->where('student_id', $studentId)
+    //             ->exists();
+
+    //         if ($already) {
+    //             return ['data' => ['registered' => true]];
+    //         }
+
+    //         // Insert using your exact column names
+    //         DB::table('participants')->insert([
+    //             'event_id'         => (int)$id,
+    //             'student_id'       => (int)$studentId,
+    //             'registration_time' => now()
+    //         ]);
+
+    //         return ['data' => ['registered' => true]];
+
+    //     } catch (\Exception $e) {
+    //         \Log::error('Registration failed', [
+    //             'event_id' => $id,
+    //             'error'    => $e->getMessage()
+    //         ]);
+    //         return response()->json(['error' => 'Failed to register'], 500);
+    //     }
+    // });
+
     Route::post('/career/events/{id}/register', function ($id) {
         try {
             $user = auth()->user();
-            if (!$user || !$user->student) {
-                return response()->json(['error' => 'Student profile not found'], 404);
-            }
+            
+            // Determine if we use student_id or mentor_id
+            $participantId = $user->role_id === 1 
+                ? $user->student?->student_id 
+                : $user->mentor?->mentor_id;
 
-            $studentId = $user->student->student_id;
+            if (!$participantId) {
+                return response()->json(['error' => 'User profile not found'], 404);
+            }
 
             // Check if already registered
             $already = DB::table('participants')
                 ->where('event_id', $id)
-                ->where('student_id', $studentId)
+                ->where('student_id', $participantId) // Note: Your table uses 'student_id' for all participants
                 ->exists();
 
             if ($already) {
-                return ['data' => ['registered' => true]];
+                return response()->json(['data' => ['registered' => true]]);
             }
 
-            // Insert using your exact column names
             DB::table('participants')->insert([
-                'event_id'         => (int)$id,
-                'student_id'       => (int)$studentId,
+                'event_id'          => (int)$id,
+                'student_id'        => (int)$participantId, // Saving the ID to the participant table
                 'registration_time' => now()
             ]);
 
-            return ['data' => ['registered' => true]];
+            return response()->json(['data' => ['registered' => true]]);
 
         } catch (\Exception $e) {
-            \Log::error('Registration failed', [
-                'event_id' => $id,
-                'error'    => $e->getMessage()
-            ]);
-            return response()->json(['error' => 'Failed to register'], 500);
+            return response()->json(['error' => 'Registration failed: ' . $e->getMessage()], 500);
         }
     });
 
     // UNREGISTER (DELETE)
+    // Route::delete('/career/events/{id}/register', function ($id) {
+    //     try {
+    //         $user = auth()->user();
+    //         if (!$user || !$user->student) {
+    //             return response()->json(['error' => 'Student profile not found'], 404);
+    //         }
+
+    //         $studentId = $user->student->student_id;
+
+    //         $deleted = DB::table('participants')
+    //             ->where('event_id', $id)
+    //             ->where('student_id', $studentId)
+    //             ->delete();
+
+    //         return ['data' => ['registered' => false]];
+
+    //     } catch (\Exception $e) {
+    //         \Log::error('Cancel registration failed', ['error' => $e->getMessage()]);
+    //         return response()->json(['error' => 'Failed to cancel'], 500);
+    //     }
+    // });
+
     Route::delete('/career/events/{id}/register', function ($id) {
         try {
             $user = auth()->user();
-            if (!$user || !$user->student) {
-                return response()->json(['error' => 'Student profile not found'], 404);
-            }
+            $participantId = ($user->role_id === 1) ? $user->student?->student_id : $user->mentor?->mentor_id;
 
-            $studentId = $user->student->student_id;
-
-            $deleted = DB::table('participants')
+            DB::table('participants')
                 ->where('event_id', $id)
-                ->where('student_id', $studentId)
+                ->where('student_id', $participantId)
                 ->delete();
 
-            return ['data' => ['registered' => false]];
-
+            return response()->json(['data' => ['registered' => false]]);
         } catch (\Exception $e) {
-            \Log::error('Cancel registration failed', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to cancel'], 500);
         }
     });
