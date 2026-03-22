@@ -34,7 +34,7 @@ async function apiCall(endpoint, options = {}) {
 
     if (response.status === 401) {
         console.error("STOPPING REDIRECT: A 401 error occurred.");
-        localStorage.clear();
+        // localStorage.clear();
         // Comment out the line below temporarily!
         // window.location.href = '/login?reason=session_expired'; 
         return null; 
@@ -77,12 +77,15 @@ const AuthAPI = {
             body: JSON.stringify({ email, password })
         });
 
-        // FIX: response IS the object, not response.data
-        if (response && response.token) {
-            saveToken(response.token); 
-            localStorage.setItem('userRole', response.role);
-            return response;
+        // FIX: The token is inside response.data.token
+        if (response && response.data && response.data.token) {
+            saveToken(response.data.token); 
+            // Save the role from the response (see Laravel fix below)
+            localStorage.setItem('userRole', response.data.role || 'student');
+            return response.data;
         }
+        
+        console.error("Login failed: Token missing in response", response);
         throw new Error("Invalid response from server");
     },
 

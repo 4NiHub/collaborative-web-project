@@ -128,9 +128,12 @@ Route::post('/auth/login', function () {
         $token = $user->createToken('api-token')->plainTextToken;
         $student = $user->student;
 
+        $role = ($user->role_id === 1) ? 'student' : 'teacher';
+
         return response()->json([
             'data' => [
                 'token' => $token,
+                'role' => $role,
                 'student' => [
                     'id' => 'STU001',
                     'firstName' => $student->name,
