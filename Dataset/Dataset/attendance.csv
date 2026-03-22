@@ -1,0 +1,11 @@
+student_id,module,classes,total,attended
+1,Math,30,30,28
+1,Programming,30,30,29
+2,Math,30,30,25
+2,Programming,30,30,27
+3,Math,30,30,30
+3,Programming,30,30,29
+4,Math,30,30,22
+4,Programming,30,30,24
+5,Math,30,30,27
+5,Programming,30,30,28
