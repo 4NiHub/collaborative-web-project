@@ -704,6 +704,56 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Disabled button for Staff */
+        .register-btn.staff-view {
+            background: #64748b;
+            cursor: help; /* Shows a question mark or help cursor */
+            opacity: 0.8;
+        }
+
+        .register-btn.staff-view:hover {
+            background: #475569;
+        }
+
+        /* Custom Success/Info Popup */
+        .custom-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981; /* Emerald Green */
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+        }
+
+        .custom-popup.active {
+            transform: translateY(0);
+        }
+
+        .custom-popup-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Dark Mode adjustment for Popup */
+        body.dark-mode .custom-popup {
+            background: #059669; /* Slightly deeper green for dark mode */
+            border: 1px solid rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
@@ -975,28 +1025,55 @@
                 }
 
                 container.innerHTML = '';
+                // Inside loadEvents() find the forEach loop:
                 events.forEach(function(ev) {
                     var card = document.createElement('div');
                     card.className = 'event-card';
-                    card.setAttribute('data-id', ev.id);
-                    card.setAttribute('data-registered', ev.registered ? '1' : '0');
+                    
+                    // Logic to determine button HTML
+                    let btnHtml = '';
+                    if (isTeacher) {
+                        btnHtml = `<button class="register-btn staff-view" onclick="showStaffNotice()">Staff View Only</button>`;
+                    } else {
+                        btnHtml = ev.registered
+                            ? `<button class="register-btn registered" id="evtBtn_${ev.id}">Registered ✓</button>
+                            <button class="cancel-reg-btn" onclick="cancelEventRegistration(${ev.id})" style="...">Cancel</button>`
+                            : `<button class="register-btn" onclick="registerForEvent(${ev.id}, this)">Register Now</button>`;
+                    }
 
-                    card.innerHTML =
-                        '<div class="event-date">' + ev.date + '</div>' +
-                        '<h3 class="event-title">' + ev.title + '</h3>' +
-                        '<div class="event-time">' +
-                            '<img src="{{ asset('images/clock.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">' + 
-                            (ev.time || '—') + '</div>' +
-                        '<div class="event-location">' +
-                            '<img src="{{ asset('images/pin.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">' +
-                            (ev.location || '—') +
-                        '</div>' +
-                        '<div class="event-spots">Spots available: <span>' + (ev.spots || '—') + '</span></div>' +
-                        (ev.registered
-                            ? '<button class="register-btn registered" id="evtBtn_' + ev.id + '">Registered ✓</button>' +
-                            '<button class="cancel-reg-btn" id="evtCancel_' + ev.id + '" style="margin-top:6px;width:100%;padding:6px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;font-size:12px;cursor:pointer;">Cancel Registration</button>'
-                            : '<button class="register-btn" id="evtBtn_' + ev.id + '">Register Now</button>'
-                        );
+                    card.innerHTML = `
+                        <div class="event-date">${ev.date}</div>
+                        <h3 class="event-title">${ev.title}</h3>
+                        <div class="event-time">...</div>
+                        <div class="event-location">...</div>
+                        <div class="event-spots">Spots available: ${ev.spots || '—'}</div>
+                        ${btnHtml}
+                    `;
+                    container.appendChild(card);
+                });
+
+                // events.forEach(function(ev) {
+                //     var card = document.createElement('div');
+                //     card.className = 'event-card';
+                //     card.setAttribute('data-id', ev.id);
+                //     card.setAttribute('data-registered', ev.registered ? '1' : '0');
+
+                //     card.innerHTML =
+                //         '<div class="event-date">' + ev.date + '</div>' +
+                //         '<h3 class="event-title">' + ev.title + '</h3>' +
+                //         '<div class="event-time">' +
+                //             '<img src="{{ asset('images/clock.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">' + 
+                //             (ev.time || '—') + '</div>' +
+                //         '<div class="event-location">' +
+                //             '<img src="{{ asset('images/pin.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">' +
+                //             (ev.location || '—') +
+                //         '</div>' +
+                //         '<div class="event-spots">Spots available: <span>' + (ev.spots || '—') + '</span></div>' +
+                //         (ev.registered
+                //             ? '<button class="register-btn registered" id="evtBtn_' + ev.id + '">Registered ✓</button>' +
+                //             '<button class="cancel-reg-btn" id="evtCancel_' + ev.id + '" style="margin-top:6px;width:100%;padding:6px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;font-size:12px;cursor:pointer;">Cancel Registration</button>'
+                //             : '<button class="register-btn" id="evtBtn_' + ev.id + '">Register Now</button>'
+                //         );
 
                     // var btn = card.querySelector('#evtBtn_' + ev.id);
 
@@ -1191,6 +1268,33 @@
         function closeJobModal() {
             document.getElementById('jobModal').classList.remove('active');
             currentJobId = null;
+        }
+
+        // Function to show the amazing green popup
+        function showStaffNotice() {
+            // Create popup element if it doesn't exist
+            let popup = document.getElementById('staffPopup');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'staffPopup';
+                popup.className = 'custom-popup';
+                popup.innerHTML = `
+                    <div class="custom-popup-icon">!</div>
+                    <div>
+                        <strong style="display:block;">Staff Access</strong>
+                        <span style="font-size:13px; opacity:0.9;">You have full viewing rights for this event. No registration required!</span>
+                    </div>
+                `;
+                document.body.appendChild(popup);
+            }
+
+            // Trigger animation
+            popup.classList.add('active');
+
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                popup.classList.remove('active');
+            }, 3500);
         }
 
         loadJobs();
