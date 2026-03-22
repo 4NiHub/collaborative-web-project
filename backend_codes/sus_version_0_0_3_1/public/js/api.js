@@ -33,10 +33,11 @@ async function apiCall(endpoint, options = {}) {
     });
 
     if (response.status === 401) {
+        console.error("STOPPING REDIRECT: A 401 error occurred.");
         localStorage.clear();
-        // Use a query param to tell the login page NOT to redirect back to dashboard
-        window.location.href = '/login?reason=session_expired'; 
-        return null;
+        // Comment out the line below temporarily!
+        // window.location.href = '/login?reason=session_expired'; 
+        return null; 
     }
 
     if (response.status === 204) {

@@ -33,12 +33,19 @@ class AuthController extends Controller
     // }
 
     public function showLogin(Request $request) {
-        // ONLY redirect to dashboard if authenticated AND there is no 'reason' (like session_expired)
+        // If the user is authenticated but the JS sent them here with a 'reason',
+        // log them out of the session too to break the loop.
+        if ($request->has('reason')) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        // Only redirect to dashboard if they are logged in AND haven't been kicked out
         if (Auth::check() && !$request->has('reason')) {
             return redirect()->route('dashboard');
         }
-        
-        // If reason=session_expired is present, we stay here and let them log in again
+
         return view('auth.login');
     }
 
