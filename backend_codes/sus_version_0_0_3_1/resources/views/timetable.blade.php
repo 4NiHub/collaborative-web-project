@@ -779,11 +779,11 @@
             </div>
 
             <div class="sidebar-icons">
-                <div class="sidebar-icon active" data-page="dashboard" data-tooltip="Dashboard">
+                <div class="sidebar-icon" data-page="dashboard" data-tooltip="Dashboard">
                     <img src="{{ asset('images/home.png') }}" alt="Dashboard">
                     <span class="sidebar-label">Dashboard</span>
                 </div>
-                <div class="sidebar-icon" data-page="timetable" data-tooltip="Timetable">
+                <div class="sidebar-icon active" data-page="timetable" data-tooltip="Timetable">
                     <img src="{{ asset('images/calendar.png') }}" alt="Timetable">
                     <span class="sidebar-label">Timetable</span>
                 </div>
