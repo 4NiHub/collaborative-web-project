@@ -1039,7 +1039,7 @@
                     } else {
                         btnHtml = ev.registered
                             ? `<button class="register-btn registered" id="evtBtn_${ev.id}">Registered ✓</button>
-                            <button class="cancel-reg-btn" onclick="cancelEventRegistration(${ev.id})" style="margin-top:6px;width:100%;padding:6px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;font-size:12px;cursor:pointer;">Cancel Registration</button>`
+                               <button class="cancel-reg-btn" onclick="cancelEventRegistration(${ev.id})" style="margin-top:6px;width:100%;padding:6px;background:none;border:1px solid #dc2626;color:#dc2626;border-radius:6px;font-size:12px;cursor:pointer;">Cancel Registration</button>`
                             : `<button class="register-btn" onclick="registerForEvent(${ev.id}, this)">Register Now</button>`;
                     }
 
@@ -1105,31 +1105,31 @@
                     //     });
                     // }
 
-                    var btn = card.querySelector('#evtBtn_' + ev.id);
+        //             var btn = card.querySelector('#evtBtn_' + ev.id);
 
-                    if (!ev.registered) {
-                        // Not registered
-                        btn.addEventListener('click', function() {
-                            registerForEvent(ev.id, btn);
-                        });
-                    } else {
-                        // Already registered → only cancel button works
-                        var cancelBtn = card.querySelector('#evtCancel_' + ev.id);
-                        if (cancelBtn) {
-                            cancelBtn.addEventListener('click', function() {
-                                cancelEventRegistration(ev.id);
-                            });
-                        }
-                    }
+        //             if (!ev.registered) {
+        //                 // Not registered
+        //                 btn.addEventListener('click', function() {
+        //                     registerForEvent(ev.id, btn);
+        //                 });
+        //             } else {
+        //                 // Already registered → only cancel button works
+        //                 var cancelBtn = card.querySelector('#evtCancel_' + ev.id);
+        //                 if (cancelBtn) {
+        //                     cancelBtn.addEventListener('click', function() {
+        //                         cancelEventRegistration(ev.id);
+        //                     });
+        //                 }
+        //             }
 
-                    container.appendChild(card);
-                });
+        //             container.appendChild(card);
+        //         });
 
-            } catch (err) {
-                container.innerHTML = '<div class="state-msg error">Could not load events. Please refresh.</div>';
-                console.error('[Career] Events load failed:', err.message);
-            }
-        }
+        //     } catch (err) {
+        //         container.innerHTML = '<div class="state-msg error">Could not load events. Please refresh.</div>';
+        //         console.error('[Career] Events load failed:', err.message);
+        //     }
+        // }
         // //register event
         // async function registerForEvent(eventId, btn) {
         //     btn.disabled = true;
