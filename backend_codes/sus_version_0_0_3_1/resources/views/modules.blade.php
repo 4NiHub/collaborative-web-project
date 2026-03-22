@@ -615,8 +615,9 @@
             <div class="sidebar-toggle-btn">
                 <img src="{{ asset('images/arrow_menu_open.png') }}" alt="Toggle Sidebar">
             </div>
+
             <div class="sidebar-icons">
-                <div class="sidebar-icon" data-page="dashboard" data-tooltip="Dashboard">
+                <div class="sidebar-icon active" data-page="dashboard" data-tooltip="Dashboard">
                     <img src="{{ asset('images/home.png') }}" alt="Dashboard">
                     <span class="sidebar-label">Dashboard</span>
                 </div>
@@ -624,13 +625,13 @@
                     <img src="{{ asset('images/calendar.png') }}" alt="Timetable">
                     <span class="sidebar-label">Timetable</span>
                 </div>
-                <div class="sidebar-icon active" data-page="modules" data-tooltip="My Modules">
+                <div class="sidebar-icon" data-page="modules" data-tooltip="My Modules">
                     <img src="{{ asset('images/modules.png') }}" alt="Modules">
                     <span class="sidebar-label">My Modules</span>
                 </div>
                 <div class="sidebar-icon" data-page="records" data-tooltip="Records">
                     <img src="{{ asset('images/records.png') }}" alt="Records">
-                    <span class="sidebar-label">Records</span>
+                <span class="sidebar-label">Records</span>
                 </div>
                 <div class="sidebar-icon" data-page="news" data-tooltip="News">
                     <img src="{{ asset('images/news.png') }}" alt="News">
@@ -649,8 +650,8 @@
                     <span class="sidebar-label">Contact</span>
                 </div>
                 <div class="sidebar-icon" data-page="help" data-tooltip="Help">
-                    <img src="{{ asset('images/help.png') }}" alt="Help">
-                    <span class="sidebar-label">Help</span>
+                     <img src="{{ asset('images/help.png') }}" alt="Help">
+                     <span class="sidebar-label">Help</span>
                 </div>
                 <div class="sidebar-icon theme-toggle" data-tooltip="Toggle Theme">
                     <img src="{{ asset('images/dark_mode.png') }}" alt="Dark Mode">

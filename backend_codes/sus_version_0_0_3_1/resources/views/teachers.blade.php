@@ -1052,7 +1052,7 @@
             </div>
 
             <div class="sidebar-icons">
-                <div class="sidebar-icon" data-page="dashboard" data-tooltip="Dashboard">
+                <div class="sidebar-icon active" data-page="dashboard" data-tooltip="Dashboard">
                     <img src="{{ asset('images/home.png') }}" alt="Dashboard">
                     <span class="sidebar-label">Dashboard</span>
                 </div>
@@ -1072,7 +1072,7 @@
                     <img src="{{ asset('images/news.png') }}" alt="News">
                     <span class="sidebar-label">News</span>
                 </div>
-                <div class="sidebar-icon active" data-page="teachers" data-tooltip="Teachers">
+                <div class="sidebar-icon" data-page="teachers" data-tooltip="Teachers">
                     <img src="{{ asset('images/teacher.png') }}" alt="Teachers">
                     <span class="sidebar-label">Teachers</span>
                 </div>
