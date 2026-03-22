@@ -92,21 +92,26 @@ const AuthAPI = {
         const token = getToken();
 
         try {
-            if (token) {
-                // Use apiCall to ensure headers and CSRF are included
-                await apiCall('/logout', { method: 'POST' }); 
-            }
+            // We MUST include credentials so the session cookie is sent and destroyed
+            await fetch('/logout', {
+                method: 'POST',
+                credentials: 'include', // <--- ADD THIS LINE
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                }
+            });
         } catch (err) {
-            console.warn("Server logout failed, cleaning up locally.", err);
-        } finally {
-            // ALWAYS clear local data regardless of server success
-            deleteToken();
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('auth_token'); // Ensure this matches your storage key
-            
-            // Force a hard reload to the login page to clear any remaining memory state
-            window.location.replace('/login'); 
+            console.warn("Server logout failed, cleaning up locally.");
         }
+
+        // Clear local storage
+        deleteToken();
+        localStorage.removeItem('userRole');
+        
+        // Final redirect
+        window.location.href = '/login'; 
     }
 };
 
