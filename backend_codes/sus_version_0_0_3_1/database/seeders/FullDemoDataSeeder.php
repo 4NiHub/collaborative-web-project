@@ -29,18 +29,18 @@ class FullDemoDataSeeder extends Seeder
         $bcryptHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
         DB::table('users')->insertOrIgnore([
-            ['user_id' => 1, 'role_id' => 1, 'email' => 'a.morgan@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 09:00:00'],
-            ['user_id' => 2, 'role_id' => 2, 'email' => 's.johnson@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:00:00'],
-            ['user_id' => 3, 'role_id' => 2, 'email' => 'm.chen@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:01:00'],
-            ['user_id' => 4, 'role_id' => 2, 'email' => 'e.rodriguez@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:02:00'],
-            ['user_id' => 5, 'role_id' => 2, 'email' => 's.taylor@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:03:00'],
-            ['user_id' => 6, 'role_id' => 2, 'email' => 'd.williams@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:04:00'],
-            ['user_id' => 7, 'role_id' => 2, 'email' => 'j.anderson@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:05:00'],
-            ['user_id' => 8, 'role_id' => 3, 'email' => 'student.services@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:06:00'],
-            ['user_id' => 9, 'role_id' => 3, 'email' => 'registry@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:07:00'],
-            ['user_id' => 10, 'role_id' => 3, 'email' => 'it@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:08:00'],
-            ['user_id' => 11, 'role_id' => 3, 'email' => 'finance@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:09:00'],
-            ['user_id' => 12, 'role_id' => 3, 'email' => 'careers@sus.edu', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:10:00'],
+            ['user_id' => 1, 'role_id' => 1, 'email' => 'a.morgan@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 09:00:00'],
+            ['user_id' => 2, 'role_id' => 2, 'email' => 's.johnson@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:00:00'],
+            ['user_id' => 3, 'role_id' => 2, 'email' => 'm.chen@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:01:00'],
+            ['user_id' => 4, 'role_id' => 2, 'email' => 'e.rodriguez@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:02:00'],
+            ['user_id' => 5, 'role_id' => 2, 'email' => 's.taylor@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:03:00'],
+            ['user_id' => 6, 'role_id' => 2, 'email' => 'd.williams@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:04:00'],
+            ['user_id' => 7, 'role_id' => 2, 'email' => 'j.anderson@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:05:00'],
+            ['user_id' => 8, 'role_id' => 3, 'email' => 'student.services@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:06:00'],
+            ['user_id' => 9, 'role_id' => 3, 'email' => 'registry@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:07:00'],
+            ['user_id' => 10, 'role_id' => 3, 'email' => 'it@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:08:00'],
+            ['user_id' => 11, 'role_id' => 3, 'email' => 'finance@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:09:00'],
+            ['user_id' => 12, 'role_id' => 3, 'email' => 'careers@wlv.ac.uk', 'password_hash' => $bcryptHash, 'creation_time' => '2025-09-01 10:10:00'],
         ]);
 
         // ────────────────────────────────────────────────
@@ -89,7 +89,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 2,
                 'name'             => 'Sarah',
                 'surname'          => 'Johnson',
-                'email'            => 's.johnson@sus.edu',
+                'email'            => 's.johnson@wlv.ac.uk',
                 'phone_number'     => '+1 555-0101',
                 'department'       => 'Computer Science',
                 'office_location'  => 'Block A, Room 205',
@@ -101,7 +101,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Senior Lecturer in Computer Science',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link'   => 'https://www.wlv.ac.uk/',
                             'period' => '2015–present',
                             'desc'   => 'Leading undergraduate and postgraduate modules in algorithms and data structures.',
                             'color'  => 'blue'
@@ -109,6 +110,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Postdoctoral Researcher',
                             'org'    => 'University of Manchester',
+                            'link'   => 'https://www.manchester.ac.uk/',
                             'period' => '2012–2015',
                             'desc'   => 'Research in efficient algorithm design and complexity theory.',
                             'color'  => 'blue'
@@ -116,6 +118,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Software Engineer',
                             'org'    => 'ARM Holdings',
+                            'link'   => 'https://www.arm.com/',
                             'period' => '2008–2012',
                             'desc'   => 'Developed low-level software components for embedded systems.',
                             'color'  => 'blue'
@@ -125,29 +128,32 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'PhD Computer Science',
                             'school'  => 'University of Manchester',
+                            'link'    => 'https://www.manchester.ac.uk/',
                             'period'  => '2012'
                         ],
                         [
                             'degree'  => 'MSc Advanced Computer Science',
                             'school'  => 'University of Bristol',
+                            'link'    => 'https://www.bristol.ac.uk/',
                             'period'  => '2008'
                         ],
                         [
                             'degree'  => 'BSc Computer Science (First Class)',
                             'school'  => 'University of Warwick',
+                            'link'    =>  'https://warwick.ac.uk/',
                             'period'  => '2007'
                         ],
                     ],
                     'roles' => [
                         [
                             'title'  => 'Programme Leader — BSc Computer Science',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
                             'status' => 'Current',
                             'desc'   => 'Responsible for curriculum development and quality assurance (2022–present)'
                         ],
                         [
                             'title'  => 'Module Coordinator — Data Structures & Algorithms',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
                             'status' => 'Current',
                             'desc'   => 'Designing assessments and supervising teaching assistants'
                         ],
@@ -160,7 +166,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 3,
                 'name'             => 'Michael',
                 'surname'          => 'Chen',
-                'email'            => 'm.chen@sus.edu',
+                'email'            => 'm.chen@wlv.ac.uk',
                 'phone_number'     => '+1 555-0102',
                 'department'       => 'Computer Science',
                 'office_location'  => 'Block B, Room 310',
@@ -172,7 +178,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Lecturer in Web Technologies',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link'   => 'https://www.wlv.ac.uk/',
                             'period' => '2018–present',
                             'desc'   => 'Teaching frontend, backend and full-stack development courses.',
                             'color'  => 'blue'
@@ -180,6 +187,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Frontend Developer',
                             'org'    => 'BBC Digital',
+                            'link'   => 'https://www.bbcdigital.com.au/',
                             'period' => '2014–2018',
                             'desc'   => 'Built responsive web applications for news and media platforms.',
                             'color'  => 'blue'
@@ -189,18 +197,20 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'MSc Internet Computing',
                             'school'  => 'Imperial College London',
+                            'link' => 'https://www.imperial.ac.uk/',
                             'period'  => '2014'
                         ],
                         [
                             'degree'  => 'BSc Computer Science',
                             'school'  => 'University of Edinburgh',
+                            'link'    => 'https://www.ed.ac.uk/',
                             'period'  => '2012'
                         ],
                     ],
                     'roles' => [
                         [
                             'title'  => 'Web Accessibility Champion',
-                            'org'    => 'SUS Faculty of Computing',
+                            'org'    => 'Wolverhampton Faculty of Computing',
                             'status' => 'Current',
                             'desc'   => 'Leading initiative to make all departmental websites WCAG 2.2 compliant'
                         ],
@@ -213,7 +223,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 4,
                 'name'             => 'Emily',
                 'surname'          => 'Rodriguez',
-                'email'            => 'e.rodriguez@sus.edu',
+                'email'            => 'e.rodriguez@wlv.ac.uk',
                 'phone_number'     => '+1 555-0103',
                 'department'       => 'Computer Science',
                 'office_location'  => 'Block A, Room 208',
@@ -225,7 +235,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Lecturer in Database Systems',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link'   => 'https://www.wlv.ac.uk/',
                             'period' => '2019–present',
                             'desc'   => 'Teaching relational databases, NoSQL and big data technologies.',
                             'color'  => 'blue'
@@ -233,6 +244,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Database Administrator',
                             'org'    => 'NHS Digital',
+                            'link'   => 'https://digital.nhs.uk/',
                             'period' => '2015–2019',
                             'desc'   => 'Managed large-scale healthcare databases with high availability requirements.',
                             'color'  => 'blue'
@@ -242,18 +254,20 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'PhD Information Systems',
                             'school'  => 'University College London',
+                            'link'    => 'https://www.ucl.ac.uk/',
                             'period'  => '2015'
                         ],
                         [
                             'degree'  => 'MSc Database Systems',
                             'school'  => 'City University London',
+                            'link'    => 'https://www.citystgeorges.ac.uk/',
                             'period'  => '2011'
                         ],
                     ],
                     'roles' => [
                         [
                             'title'  => 'Best Lecturer Award Winner',
-                            'org'    => 'SUS Student Union',
+                            'org'    => 'Wolverhampton Student Union',
                             'status' => '2024',
                             'desc'   => 'Recognized for outstanding teaching and student support'
                         ],
@@ -266,7 +280,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 5,
                 'name'             => 'Susan',
                 'surname'          => 'Taylor',
-                'email'            => 's.taylor@sus.edu',
+                'email'            => 's.taylor@wlv.ac.uk',
                 'phone_number'     => '+1 555-0104',
                 'department'       => 'Mathematics',
                 'office_location'  => 'Block C, Room 102',
@@ -278,7 +292,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Senior Lecturer in Mathematics',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link'   => 'https://www.wlv.ac.uk/',
                             'period' => '2010–present',
                             'desc'   => 'Teaching advanced calculus, linear algebra and mathematical modelling.',
                             'color'  => 'blue'
@@ -286,6 +301,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Mathematical Modeller',
                             'org'    => 'Met Office',
+                            'link'   => 'https://www.metoffice.gov.uk/',
                             'period' => '2006–2010',
                             'desc'   => 'Developed weather prediction models using numerical methods.',
                             'color'  => 'blue'
@@ -295,16 +311,19 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'PhD Applied Mathematics',
                             'school'  => 'University of Oxford',
+                            'link'    => 'https://www.ox.ac.uk/',
                             'period'  => '2006'
                         ],
                         [
                             'degree'  => 'MSc Mathematical Modelling',
                             'school'  => 'Imperial College London',
+                            'link'    => 'https://www.imperial.ac.uk/',
                             'period'  => '2003'
                         ],
                         [
                             'degree'  => 'BSc Mathematics (First Class)',
                             'school'  => 'University of Bath',
+                            'link'    => 'https://www.bath.ac.uk/',
                             'period'  => '2002'
                         ],
                     ],
@@ -324,7 +343,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 6,
                 'name'             => 'David',
                 'surname'          => 'Williams',
-                'email'            => 'd.williams@sus.edu',
+                'email'            => 'd.williams@wlv.ac.uk',
                 'phone_number'     => '+1 555-0105',
                 'department'       => 'Software Engineering',
                 'office_location'  => 'Block B, Room 405',
@@ -336,7 +355,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Lecturer in Cybersecurity',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link'   => 'https://www.wlv.ac.uk/',
                             'period' => '2020–present',
                             'desc'   => 'Teaching network security, ethical hacking and secure software development.',
                             'color'  => 'blue'
@@ -344,6 +364,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Security Consultant',
                             'org'    => 'Deloitte Cyber',
+                            'link'   => 'https://www.deloitte.com/global/en/services/consulting/services/cyber.html',
                             'period' => '2016–2020',
                             'desc'   => 'Conducted security assessments for Fortune 500 clients.',
                             'color'  => 'blue'
@@ -351,6 +372,7 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'title'  => 'Penetration Tester (freelance)',
                             'org'    => 'Various clients',
+                            'link'   => 'https://www.linkedin.com/company/consultancyclients',
                             'period' => '2014–2016',
                             'desc'   => 'Performed vulnerability assessments and red team exercises.',
                             'color'  => 'blue'
@@ -360,18 +382,20 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'MSc Cyber Security',
                             'school'  => 'Royal Holloway, University of London',
+                            'link'    => 'https://www.royalholloway.ac.uk/',
                             'period'  => '2016'
                         ],
                         [
                             'degree'  => 'BSc Computer Science & Security',
                             'school'  => 'University of Surrey',
+                            'link'    => 'https://www.surrey.ac.uk/',
                             'period'  => '2014'
                         ],
                     ],
                     'roles' => [
                         [
                             'title'  => 'Cyber Security Society Advisor',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
                             'status' => 'Current',
                             'desc'   => 'Mentoring student cybersecurity club and organising CTF events'
                         ],
@@ -384,7 +408,7 @@ class FullDemoDataSeeder extends Seeder
                 'user_id'          => 7,
                 'name'             => 'James',
                 'surname'          => 'Anderson',
-                'email'            => 'j.anderson@sus.edu',
+                'email'            => 'j.anderson@wlv.ac.uk',
                 'phone_number'     => '+1 555-0106',
                 'department'       => 'Computer Science',
                 'office_location'  => 'Block A, Room 210',
@@ -396,7 +420,8 @@ class FullDemoDataSeeder extends Seeder
                     'experience' => [
                         [
                             'title'  => 'Lecturer in Discrete Mathematics',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
+                            'link' => 'https://www.wlv.ac.uk/',
                             'period' => '2017–present',
                             'desc'   => 'Teaching graph theory, combinatorics and algorithm analysis.',
                             'color'  => 'blue'
@@ -406,18 +431,20 @@ class FullDemoDataSeeder extends Seeder
                         [
                             'degree'  => 'PhD Pure Mathematics',
                             'school'  => 'University of Cambridge',
+                            'link'    => 'https://www.cam.ac.uk/',
                             'period'  => '2017'
                         ],
                         [
                             'degree'  => 'MMath Mathematics',
                             'school'  => 'University of Warwick',
+                            'link'    => 'https://warwick.ac.uk/',
                             'period'  => '2013'
                         ],
                     ],
                     'roles' => [
                         [
                             'title'  => 'Research Group Coordinator — Discrete Algorithms',
-                            'org'    => 'SUS',
+                            'org'    => 'Wolverhampton',
                             'status' => 'Current',
                             'desc'   => 'Organising weekly seminars and supervising MSc projects'
                         ],
@@ -651,11 +678,11 @@ class FullDemoDataSeeder extends Seeder
         // 14. STAFF
         // ────────────────────────────────────────────────
         DB::table('staff')->insertOrIgnore([
-            ['staff_id' => 1, 'user_id' => 8, 'name' => 'Student Services', 'surname' => 'Team', 'email' => 'student.services@sus.edu', 'phone_number' => '+1 555-1000', 'job_position' => 'Student Services'],
-            ['staff_id' => 2, 'user_id' => 9, 'name' => 'Academic Registry', 'surname' => 'Team', 'email' => 'registry@sus.edu',        'phone_number' => '+1 555-1001', 'job_position' => 'Academic Registry'],
-            ['staff_id' => 3, 'user_id' => 10, 'name' => 'IT Helpdesk',       'surname' => 'Team', 'email' => 'it@sus.edu',              'phone_number' => '+1 555-1002', 'job_position' => 'IT Helpdesk'],
-            ['staff_id' => 4, 'user_id' => 11, 'name' => 'Finance Office',    'surname' => 'Team', 'email' => 'finance@sus.edu',         'phone_number' => '+1 555-1003', 'job_position' => 'Finance Office'],
-            ['staff_id' => 5, 'user_id' => 12, 'name' => 'Career Centre',     'surname' => 'Team', 'email' => 'careers@sus.edu',         'phone_number' => '+1 555-1004', 'job_position' => 'Career Centre'],
+            ['staff_id' => 1, 'user_id' => 8, 'name' => 'Student Services', 'surname' => 'Team', 'email' => 'student.services@wlv.ac.uk', 'phone_number' => '+1 555-1000', 'job_position' => 'Student Services'],
+            ['staff_id' => 2, 'user_id' => 9, 'name' => 'Academic Registry', 'surname' => 'Team', 'email' => 'registry@wlv.ac.uk',        'phone_number' => '+1 555-1001', 'job_position' => 'Academic Registry'],
+            ['staff_id' => 3, 'user_id' => 10, 'name' => 'IT Helpdesk',       'surname' => 'Team', 'email' => 'it@wlv.ac.uk',              'phone_number' => '+1 555-1002', 'job_position' => 'IT Helpdesk'],
+            ['staff_id' => 4, 'user_id' => 11, 'name' => 'Finance Office',    'surname' => 'Team', 'email' => 'finance@wlv.ac.uk',         'phone_number' => '+1 555-1003', 'job_position' => 'Finance Office'],
+            ['staff_id' => 5, 'user_id' => 12, 'name' => 'Career Centre',     'surname' => 'Team', 'email' => 'careers@wlv.ac.uk',         'phone_number' => '+1 555-1004', 'job_position' => 'Career Centre'],
         ]);
 
         // ────────────────────────────────────────────────

@@ -90,8 +90,8 @@ class RegisterController extends Controller
                     'nationality' => 'British',
                     'languages' => 'English',
                     'profile_data' => json_encode([
-                        'experience' => [[ 'title' => 'Senior Lecturer', 'org' => 'SUS', 'period' => '2020 - Present', 'desc' => 'Core module delivery' ]],
-                        'education' => [[ 'degree' => 'PhD Computer Science', 'school' => 'University of Manchester', 'period' => '2015' ]]
+                        'experience' => [[ 'title' => 'Senior Lecturer', 'org' => 'Wolverhampton', 'link' => 'https://www.wlv.ac.uk/', 'period' => '2020 - Present', 'desc' => 'Core module delivery' ]],
+                        'education' => [[ 'degree' => 'PhD Computer Science','link' => 'https://www.manchester.ac.uk/', 'school' => 'University of Manchester', 'period' => '2015' ]]
                     ])
                 ], 'mentor_id');
     
