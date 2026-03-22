@@ -12,25 +12,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // 1. Trust all proxies (Critical for DigitalOcean Load Balancers)
+        // This is the "secret sauce" for Sanctum on production
+        $middleware->statefulApi();
+        
+        // Ensure headers are trusted on Digital Ocean
         $middleware->trustProxies(at: '*');
-
-        // 2. Register your custom role middleware
-        $middleware->alias([
-            'student' => \App\Http\Middleware\EnsureIsStudent::class,
-            'teacher' => \App\Http\Middleware\EnsureIsTeacher::class,
-        ]);
-
-        // 3. Disable CSRF for API and Logout to stop 419 errors
-        $middleware->validateCsrfTokens(except: [
-            'api/*',
-            'logout',
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })
-    ->booting(function ($app) {
-        $app->useStoragePath($app->basePath() . '/storage');
-    })
-    ->create();
+    })->create();

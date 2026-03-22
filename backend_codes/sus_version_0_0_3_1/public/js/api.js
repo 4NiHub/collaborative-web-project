@@ -1,29 +1,28 @@
 const API_BASE_URL = 'https://smart-university.site/api';
 
 // ==================== CORE HELPERS ====================
-function getToken()        { return localStorage.getItem('userToken'); }
-function saveToken(token)  { localStorage.setItem('userToken', token); }
-function deleteToken()     { localStorage.removeItem('userToken'); }
-function getRole()         { return localStorage.getItem('userRole'); }   // "student" or "teacher"
+function getToken()        { return localStorage.getItem('auth_token'); }
+function saveToken(token)  { localStorage.setItem('auth_token', token); }
+function deleteToken()     { localStorage.removeItem('auth_token'); }
+function getRole()         { return localStorage.getItem('userRole'); }
 
 // Unified apiCall (used by both roles)
 async function apiCall(endpoint, options = {}) {
     const token = getToken();
-    // Get CSRF token from the meta tag once
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     const headers = {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        // Add CSRF to EVERY call by default
         'X-CSRF-TOKEN': csrfToken, 
+        // Ensure the token is actually being passed
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers
     };
 
-    if (options.body instanceof FormData) {
-        delete headers['Content-Type'];
-    } else if (!headers['Content-Type']) {
+    // DEBUG: Uncomment the line below to verify the token in your console
+    // console.log(`Calling ${endpoint} with Token:`, token);
+
+    if (!(options.body instanceof FormData)) {
         headers['Content-Type'] = 'application/json';
     }
 
