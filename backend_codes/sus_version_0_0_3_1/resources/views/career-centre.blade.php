@@ -1012,12 +1012,12 @@
                 console.error('[Career] Jobs load failed:', err.message);
             }
         }
-        
+
         // load events
         async function loadEvents() {
             var container = document.getElementById('eventsList');
             try {
-                var res    = await CareerAPI.getEvents();
+                var res = await CareerAPI.getEvents();
                 var events = res.data || [];
 
                 if (events.length === 0) {
@@ -1047,11 +1047,11 @@
                         <div class="event-date">${ev.date}</div>
                         <h3 class="event-title">${ev.title}</h3>
                         <div class="event-time">
-                            <img src="{{ asset('images/clock.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
+                            <img src="/images/clock.png" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
                             ${ev.time || '—'}
                         </div>
                         <div class="event-location">
-                            <img src="{{ asset('images/pin.png') }}" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
+                            <img src="/images/pin.png" style="width:20px;height:20px;display:block;margin:0 5px 0 0;">
                             ${ev.location || '—'}
                         </div>
                         <div class="event-spots">Spots available: <span>${ev.spots || '—'}</span></div>
