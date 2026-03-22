@@ -336,23 +336,16 @@ class AuthController extends Controller
     // ─────────────────────────────────────────────
     //  LOGOUT
     // ─────────────────────────────────────────────
-    public function logout(Request $request)
-    {
-        // Revoke ALL tokens for this user if we can find them
-        if ($user = Auth::user()) {
-            $user->tokens()->delete();
-        }
-
-        Auth::guard('web')->logout();
+    public function logout(Request $request) {
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // If it's an API call, return JSON so the JS knows it worked
         if ($request->expectsJson()) {
-            return response()->json(['success' => true]);
+            return response()->json(['message' => 'Logged out']);
         }
 
-        return redirect()->route('login');
+        return redirect('/login');
     }
     // ─────────────────────────────────────────────
     //  HELPER
