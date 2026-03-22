@@ -88,26 +88,27 @@ const AuthAPI = {
 
     logout: async function() {
         const token = getToken();
-        
-        // Clear local storage FIRST
-        deleteToken();
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('darkMode');
 
         try {
-            await fetch('/logout', { 
-                method: 'POST', 
-                headers: { 
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json', // Added
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
-                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                } 
-            });
-        } finally {
-            // Use finally to ensure we ALWAYS redirect to login even if the network fails
-            window.location.href = '/login';
+            // Only attempt server-side logout if we have a token
+            if (token) {
+                await fetch('/api/logout', { // Added /api/ prefix
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                    }
+                });
+            }
+        } catch (err) {
+            console.warn("Server logout failed, cleaning up locally.");
         }
+
+        // Clean up local storage LAST
+        deleteToken();
+        localStorage.removeItem('userRole');
+        window.location.href = '/login';
     }
 };
 
