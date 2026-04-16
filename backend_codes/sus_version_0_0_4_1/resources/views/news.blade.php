@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>University News - Smart University System</title>
+    <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+    <style>
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: var(--sidebar-collapsed);
+            background: #2563eb;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000; 
+            transition: var(--transition);
+            overflow: hidden;
+            color: white;
+        }
+
+        .sidebar.expanded {
+            width: var(--sidebar-expanded);
+        }
+
+        .sidebar-toggle-btn {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .sidebar-toggle-btn img {
+            width: 28px;
+            height: 28px;
+            transition: transform 0.4s ease;
+        }
+
+        .sidebar.expanded .sidebar-toggle-btn img {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-icons {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .sidebar-icon {
+            width: calc(100% - 30px);
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            margin: 4px 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .sidebar-icon:hover,
+        .sidebar-icon.active {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+        }
+
+        .sidebar-icon img {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            margin-right: 0;
+            transition: margin-right 0.3s ease;
+        }
+
+        .sidebar.expanded .sidebar-icon img {
+            margin-right: 16px;
+        }
+
+        .sidebar-label {
+            opacity: 0;
+            visibility: hidden;
+            width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 15px;
+            font-weight: 500;
+            transition: opacity 0.22s ease 0.05s, width 0.35s ease, visibility 0.35s;
+        }
+
+        .sidebar.expanded .sidebar-label {
+            opacity: 1;
+            visibility: visible;
+            width: auto;
+        }
+
+        .theme-toggle,
+        .logout-icon {
+            margin-top: auto;
+        }
+
+        
+        .sidebar:not(.expanded) .sidebar-icon {
+            position: relative;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon::after {
+            content: attr(data-tooltip);
+            position: fixed; 
+            left: 98px; 
+            top: auto;
+            background: #1e293b;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            line-height: 1;
+        }
+
+        .sidebar:not(.expanded) .sidebar-icon::before {
+            content: '';
+            position: fixed; 
+            left: 87px; 
+            top: auto;
+            border: 7px solid transparent;
+            border-right-color: #1e293b;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 9999; 
+
+        }
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(1):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(1):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(2):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(2):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(3):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(3):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(4):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(4):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(5):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(5):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(6):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(6):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(7):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(7):hover::before {
+            opacity: 1;
+        }
+        
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(8):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(8):hover::before {
+            opacity: 1;
+        }
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(9):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(9):hover::before {
+            opacity: 1;
+        }
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(10):hover::after,
+        .sidebar:not(.expanded) .sidebar-icon:nth-child(10):hover::before { opacity: 1; }
+        
+
+        .main-content {
+            margin-left: var(--sidebar-collapsed);
+            transition: var(--transition);
+            flex: 1;
+            padding: 20px;
+            max-width: 2000px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar.expanded + .main-content {
+            margin-left: var(--sidebar-expanded);
+        }
+
+        body.dark-mode .sidebar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .sidebar-icon::after {
+            background: #334155;
+        }
+
+        body.dark-mode .sidebar-icon::before {
+            border-right-color: #334155;
+        }
+
+        .logout-icon {
+            margin-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 0px;
+        }
+
+        .logout-icon:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        body.dark-mode .logout-icon {
+            border-top-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Top bar */
+        .top-bar {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-container {
+            height: 70px;            
+            width: 150px;             
+            overflow: hidden;         
+            display: flex;
+            align-items: center;      
+            justify-content: flex-start;
+            padding-left: 0; 
+            margin-left: 0 ;  
+            }
+
+        .logo-container img {
+            max-height: 250%; 
+            height: auto;            
+            width: auto;
+            object-fit: contain;
+            margin-left: -40px;  
+        }
+
+        .logo-light {
+            display: block;
+        }
+
+        .logo-dark {
+          display: none;
+        }
+
+        body.dark-mode .logo-light {
+            display: none;
+        }
+
+        body.dark-mode .logo-dark {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .share-btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Page header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* News grid */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .news-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+               
+        .category-campus {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .category-default {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .news-image.grad-0, .modal-image.grad-0 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .news-image.grad-1, .modal-image.grad-1 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .news-image.grad-2, .modal-image.grad-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .news-image.grad-3, .modal-image.grad-3 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .news-image.grad-4, .modal-image.grad-4 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .news-image.grad-5, .modal-image.grad-5 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+        .category-academic {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .category-important {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .category-events {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .news-excerpt {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .news-footer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .news-meta {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .news-meta svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* News detail */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 24px;
+        }
+
+        .article-content {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+        }
+
+        .share-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .share-label {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .share-btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .share-btn-icon:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+
+        body.dark-mode .sidebar {
+            background: #1e293b;
+        }
+
+        body.dark-mode .top-bar,
+        body.dark-mode .news-card,
+        body.dark-mode .modal-content{
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .news-title,
+        body.dark-mode .page-title,
+        body.dark-mode h1,
+        body.dark-mode .article-title {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .news-footer {
+            border-top-color: #334155;
+        }
+
+        body.dark-mode .modal-header {
+            border-bottom-color: #334155;
+        }
+
+        @media (max-width: 1024px) {
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- sidebar -->
+        @auth
+            @if (auth()->user()->role_id === 2)
+                @include('partials.sidebar-teacher')
+            @else
+                @include('partials.sidebar-student')
+            @endif
+        @else
+            <!-- Guest / not logged in – optional redirect or minimal sidebar -->
+            <p style="text-align:center; padding:40px; color:#64748b;">
+                Please <a href="{{ route('login') }}">log in</a> to view this page.
+            </p>
+        @endauth
+
+        <!-- Main content -->
+        <main class="main-content">
+            <div class="top-bar">
+              <div class="logo-container">
+                 <img src="{{ asset('images/sus_logo.png') }}" alt="SuS" class="logo-light">
+                 <img src="{{ asset('images/sus_logo_dark.png') }}" alt="SuS" class="logo-dark">
+               </div>  
+              <h1 class="page-title">Smart University System</h1>
+            </div> 
+
+
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1>University News</h1>
+                <p>Stay updated with the latest announcements and events</p>
+            </div>
+
+           <div class="news-grid" id="newsGrid">
+                <div class="state-msg">Loading news...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- News detail -->
+    <div class="modal" id="newsModal">
+        <div class="modal-content"> 
+            <div class="modal-image grad-0" id="modalBanner"></div>
+
+                <div class="modal-header">
+                    <div style="flex:1;">
+                        <div class="news-category" id="modalCategory" style="position:static;display:inline-block;margin-bottom:14px;">—</div>
+                        <h2 class="article-title" id="modalTitle">Loading...</h2>
+                    </div>
+                    <button class="modal-close" onclick="closeModal()">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <img src="{{ asset('images/calendar_today.png') }}" style="width:20px;height:20px;display:block;margin-left:3px;">
+                            <span id="modalDate">—</span>
+                        </div>
+                        <div class="meta-item">
+                            <img src="{{ asset('images/person.png') }}" style="width:20px;height:20px;display:block;margin-left:3px;">
+                            <span id="modalAuthor">—</span>
+                        </div>
+                    </div>
+
+                    <div class="article-content" id="modalContent">
+                        <p>Loading article...</p>
+                    </div>
+
+                    <div class="share-section">
+                        <div class="share-label">Share this article</div>
+                        {{-- <div class="share-buttons">
+                            <button class="share-btn-icon">
+                                <img src="{{ asset('images/share.png') }}" style="width: 20px; height: 20px;display: block; margin-left: 3px;">
+                            </button>
+                            <button class="share-btn-icon" id="bookmarkBtn" onclick="toggleBookmark()" title="Bookmark article">
+                                <img src="{{ asset('images/bookmark.png') }}" id="bookmarkIcon"style="width: 20px; height: 20px;display: block; margin-left: 3px;">
+                            </button>
+                            <button class="share-btn-icon">
+                                <img src="{{ asset('images/mail.png') }}" style="width: 20px; height: 20px;display: block; margin-left: 3px;">
+                            </button>
+                        </div> --}}
+                        <div class="share-buttons">
+                            <button class="share-btn-icon" id="bookmarkBtn" onclick="toggleBookmark()" title="Bookmark article">
+                                <img src="{{ asset('images/bookmark.png') }}" id="bookmarkIcon" style="width: 20px; height: 20px;display: block; margin-left: 3px;">
+                            </button>
+                            <button class="share-btn-icon" id="contactAuthorBtn" title="Contact Author">
+                                <img src="{{ asset('images/mail.png') }}" style="width: 20px; height: 20px;display: block; margin-left: 3px;">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('js/api.js') }}?v={{ time() }}"></script>
+    {{-- <script src="{{ asset('js/api.js') }}"></script> --}}
+
+    <script>
+        // authGuard();
+
+
+        function initTheme() {
+          if (localStorage.getItem('darkMode') === 'enabled') {
+              document.body.classList.add('dark-mode');
+            }
+        }
+
+        initTheme();
+
+        document.querySelector('.theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+    
+          // Save preference
+          if (document.body.classList.contains('dark-mode')) {
+              localStorage.setItem('darkMode', 'enabled');
+          } else {
+              localStorage.setItem('darkMode', 'disabled');
+          }
+        });
+
+       // logout funct
+        document.querySelector('.logout-icon').addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+             AuthAPI.logout();
+            }
+        });
+
+        // Sidebar nav
+        var sidebar = document.querySelector('.sidebar');
+        var toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        var mainContent = document.querySelector('.main-content');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('expanded');
+            });
+        }
+
+        if (mainContent) {
+            mainContent.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('expanded') && !sidebar.contains(e.target)) {
+                    sidebar.classList.remove('expanded');
+                }
+            });
+        }
+
+        // Page nav
+        const isTeacher = {{ auth()->check() && auth()->user()->role_id === 2 ? 'true' : 'false' }};
+
+        const PAGE_MAP = {
+            'dashboard': '{{ route('dashboard') }}',
+            'timetable': isTeacher ? '{{ route('teacher.timetable') }}' : '{{ route('timetable') }}',
+            'modules':   isTeacher ? '{{ route('teacher.modules') }}' : '{{ route('modules') }}',
+            'profile':   isTeacher ? '{{ route('teacher.profile') }}' : '/profile', // adjust if student has profile route
+            'news':      '{{ route('news') }}',
+            'career':    '{{ route('career-centre') }}',
+            'contact':   '{{ route('contact') }}',
+            'help':      isTeacher ? '{{ route('teacher.help') }}' : '{{ route('help') }}',
+            'records':   '{{ route('records') ?? '/records' }}', // only for students
+            'teachers':  '{{ route('teachers') ?? '/teachers' }}', // only for students
+        };
+
+        document.querySelectorAll('.sidebar-icon[data-page]').forEach(function(icon) {
+            icon.addEventListener('click', function() {
+                const page = this.dataset.page;
+                const dest = PAGE_MAP[page];
+                if (dest) {
+                    window.location.href = dest;
+                }
+            });
+        });
+        
+        //modal close
+        document.getElementById('newsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        function closeModal() {
+            document.getElementById('newsModal').classList.remove('active');
+        }
+
+        //state  
+        var allArticles  = [];
+        var activeFilter = 'all';
+        var currentArticleId = null;
+        var bookmarkedIds    = new Set();
+
+        //mapss api category string to css class
+
+        function categoryClass(cat) {
+            if (!cat) return 'category-default';
+            var c = cat.toLowerCase();
+            if (c === 'academic') return 'category-academic';
+            if (c === 'events')   return 'category-events';
+            if (c === 'campus')   return 'category-campus';
+            if (c.indexOf('import') !== -1) return 'category-important';
+            return 'category-default';
+        }
+
+        // formats ISO date
+        async function toggleBookmark() {
+            if (!currentArticleId) return;
+
+            const btn = document.getElementById('bookmarkBtn');
+
+            // Get current state from local Set
+            const isCurrentlyBookmarked = bookmarkedIds.has(String(currentArticleId));
+
+            // Toggle the local state
+            if (isCurrentlyBookmarked) {
+                bookmarkedIds.delete(String(currentArticleId));
+                btn.style.opacity = '1';           // normal = not bookmarked
+                btn.title = 'Bookmark article';
+            } else {
+                bookmarkedIds.add(String(currentArticleId));
+                btn.style.opacity = '0.5';         // faded = bookmarked
+                btn.title = 'Bookmarked';
+            }
+
+            // // Optional: nice feedback (can replace with toast later)
+            // alert(isCurrentlyBookmarked 
+            //     ? "Bookmark removed" 
+            //     : "Added to bookmarks!");
+        }
+
+        function formatDate(str) {
+            if (!str) return '—';
+            var d = new Date(str);
+            if (isNaN(d)) return str;
+            var dd = ('0' + d.getDate()).slice(-2);
+            var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+            return dd + '.' + mm + '.' + d.getFullYear();
+        }
+
+        // --- RENDER NEWS CARDS WITH IMAGES ---
+        function renderCards(articles) {
+            var grid = document.getElementById('newsGrid');
+
+            if (!articles || articles.length === 0) {
+                grid.innerHTML = '<div class="state-msg">No news found for this category.</div>';
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            articles.forEach(function(a, idx) {
+                var gradClass  = 'grad-' + (idx % 6);
+                var catClass   = categoryClass(a.category);
+                var dateStr    = formatDate(a.publishedAt);
+
+                // NEW: Layer the image ON TOP of the gradient!
+                var imageUrl = "{{ asset('images/news') }}/" + a.image;
+                var fallbackGradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                
+                // Fixed: Removed the double quotes inside url()
+                var bgStyle = a.image 
+                    ? 'background-image: url(' + imageUrl + '), ' + fallbackGradient + '; background-size: cover; background-position: center;' 
+                    : '';
+                
+                var finalGradClass = a.image ? '' : gradClass;
+
+                var card = document.createElement('div');
+                card.className = 'news-card';
+                card.setAttribute('data-id',   a.id);
+                card.setAttribute('data-grad',  gradClass);
+                
+                if (a.image) card.setAttribute('data-image', a.image);
+
+                card.innerHTML =
+                    '<div class="news-image ' + finalGradClass + '" style="' + bgStyle + '">' +
+                        '<div class="news-category ' + catClass + '">' + (a.category || 'General') + '</div>' +
+                    '</div>' +
+                    '<div class="news-content">' +
+                        '<h3 class="news-title">' + a.title + '</h3>' +
+                        '<p class="news-excerpt">' + (a.excerpt || '') + '</p>' +
+                        '<div class="news-footer">' +
+                            '<div class="news-meta">' +
+                                '<img src="{{ asset('images/calendar_today.png') }}" style="width:20px;height:20px;display:block;margin-left:3px;">' +
+                                dateStr +
+                            '</div>' +
+                            '<div class="news-meta">' +
+                                '<img src="{{ asset('images/person.png') }}" style="width:20px;height:20px;display:block;margin-left:3px;">' +
+                                (a.author || '—') +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+
+                card.addEventListener('click', function() {
+                    openNewsModal(
+                        this.getAttribute('data-id'),
+                        this.getAttribute('data-grad'),
+                        this.getAttribute('data-image')
+                    );
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+
+        // async function loadNews() {
+        //     var grid = document.getElementById('newsGrid');
+
+        //     try {
+        //         var res = await NewsAPI.getArticles();
+        //         allArticles = res.data || [];
+
+        //         if (!articles || articles.length === 0) {
+        //             grid.innerHTML = '<div class="state-msg">No news articles available at the moment.</div>';
+        //             return;
+        //         }
+
+                
+        //         renderCards(allArticles);
+        //     } catch (err) {
+        //         grid.innerHTML = '<div class="state-msg error">Could not load news. Please refresh the page.</div>';
+        //         console.error('[News] Load failed:', err.message);
+        //     }
+        // }
+
+
+        async function loadNews() {
+            var grid = document.getElementById('newsGrid');
+
+            try {
+                const res = await NewsAPI.getNews();  
+                allArticles = res.data || [];
+
+                // Fix: use the correct variable name
+                if (!allArticles || allArticles.length === 0) {
+                    grid.innerHTML = '<div class="state-msg">No news articles available at the moment.</div>';
+                    return;
+                }
+                
+                renderCards(allArticles);
+            } catch (err) {
+                grid.innerHTML = '<div class="state-msg error">Could not load news. Please refresh the page.</div>';
+                console.error('[News] Load failed:', err.message);
+            }
+        }
+
+        // Notice we added imageFile here!
+        async function openNewsModal(articleId, gradClass, imageFile) { 
+            currentArticleId = articleId;
+            document.getElementById('newsModal').classList.add('active');
+            
+            // Redirect to Contact page for the author
+            document.getElementById('contactAuthorBtn').onclick = () => window.location.href = '/contact?department=Administration';
+            
+            var bBtn = document.getElementById('bookmarkBtn');
+            const isCurrentlyBookmarked = bookmarkedIds.has(String(articleId)); // Use the const
+            
+            if (isCurrentlyBookmarked) {
+                bBtn.style.opacity = '0.5';
+                bBtn.title = 'Bookmarked';
+            } else {
+                bBtn.style.opacity = '1';
+                bBtn.title = 'Bookmark article';
+            }
+
+            document.getElementById('modalTitle').textContent   = 'Loading...';
+            document.getElementById('modalDate').textContent    = '—';
+            document.getElementById('modalAuthor').textContent  = '—';
+            document.getElementById('modalContent').innerHTML   = '<p>Loading article...</p>';
+            document.getElementById('modalCategory').textContent = '—';
+            document.getElementById('modalCategory').className  = 'news-category category-default';
+
+            var banner = document.getElementById('modalBanner');
+            
+            // Apply the image OR the gradient to the big popup banner
+            if (imageFile) {
+                banner.style.backgroundImage = 'url("{{ asset('images/news') }}/' + imageFile + '")';
+                banner.style.backgroundSize = 'cover';
+                banner.style.backgroundPosition = 'center';
+                banner.className = 'modal-image'; // Remove gradient classes
+            } else {
+                banner.style.backgroundImage = ''; // Clear old images
+                banner.className = 'modal-image ' + (gradClass || 'grad-0');
+            }
+
+            try {
+                const res = await NewsAPI.getNewsById(articleId); 
+                const a = res.data;
+
+                document.getElementById('modalTitle').textContent    = a.title;
+                document.getElementById('modalDate').textContent     = formatDate(a.publishedAt);
+                document.getElementById('modalAuthor').textContent   = a.author || '—';
+
+                var catClass = categoryClass(a.category);
+                document.getElementById('modalCategory').textContent = a.category || 'General';
+                document.getElementById('modalCategory').className   = 'news-category ' + catClass;
+
+                
+                var body = a.content || a.body || a.excerpt || 'No content available.';
+                
+                if (body.indexOf('<p>') === -1) {
+                    body = '<p>' + body.split('\n\n').join('</p><p>') + '</p>';
+                }
+                document.getElementById('modalContent').innerHTML = body;
+
+            } catch (err) {
+                // fallback
+                var cached = null;
+                for (var i = 0; i < allArticles.length; i++) {
+                    if (String(allArticles[i].id) === String(articleId)) {
+                        cached = allArticles[i];
+                        break;
+                    }
+                }
+
+                if (cached) {
+                    document.getElementById('modalTitle').textContent   = cached.title;
+                    document.getElementById('modalDate').textContent    = formatDate(cached.publishedAt);
+                    document.getElementById('modalAuthor').textContent  = cached.author || '—';
+                    var cc = categoryClass(cached.category);
+                    document.getElementById('modalCategory').textContent = cached.category || 'General';
+                    document.getElementById('modalCategory').className   = 'news-category ' + cc;
+                    document.getElementById('modalContent').innerHTML    = '<p>' + (cached.excerpt || '') + '</p>';
+                } else {
+                    document.getElementById('modalTitle').textContent  = 'Could not load article';
+                    document.getElementById('modalContent').innerHTML  = '<p>Please close and try again.</p>';
+                }
+
+                console.error('[News Modal] Load failed:', err.message);
+            }
+        }
+
+        loadNews();
+    </script>
+</body>
+</html>
+
+              
+                
+           
