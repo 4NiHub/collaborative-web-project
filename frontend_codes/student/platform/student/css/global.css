@@ -1,0 +1,50 @@
+body {
+    font-family: var(--font);
+    background: #f8fafc;
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+body.dark-mode {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+body.dark-mode ::-webkit-scrollbar-thumb { background: #475569; }
+.g-a { background: var(--green-light);  color: var(--green); }
+.g-b { background: var(--blue-light);   color: var(--blue); }
+.g-c { background: var(--orange-light); color: var(--orange); }
+.g-d { background: var(--red-light);    color: var(--red); }
+
+
+.state-msg {
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+.state-msg.error { color: var(--red); }
+
+/* ── Fluid main content for all desktop widths ── */
+.main-content {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure modal widths are reasonable on ultra-wide screens */
+.modal-content,
+.submit-modal,
+.profile-modal {
+    max-width: min(90vw, 720px);
+}
+
+/* Prevent text from becoming too wide on large screens */
+.article-content,
+.detail-text,
+.job-description {
+    max-width: 72ch;
+}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuS Portal - Login</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body {
+            background: #667eea ;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #0f172a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container">
+            <div class="logo-icon">
+               <img src="images/sus_logo.png" alt="SUS" style="width: 120px; height: auto; display: block;">
+            </div>
+            <h1 class="logo-title">SUS Portal</h1>
+            <p class="logo-subtitle">Smart University System</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="form-input" 
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-primary">Sign In</button>
+        </form>
+
+    </div>
+
+    
+    <script src="js/api.js"></script>
+
+    <script>
+        // if user already has a token skip login and go to dashboard
+        if (isLoggedIn()) {
+            window.location.href = 'dashboard.html';
+        }
+
+        // theme
+        function initTheme() {
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        initTheme();
+
+        // login form
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn      = this.querySelector('button[type="submit"]');
+
+            // basic client-side check
+            if (!email || !password) {
+                showError('Please enter your email and password.');
+                return;
+            }
+
+            // show loading state on the button
+            btn.textContent = 'Signing in…';
+            btn.disabled    = true;
+            clearError();
+
+            try {
+                // AuthAPI.login saves the token auto
+                await AuthAPI.login(email, password);
+
+                // token saved then go to dashboard
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                // wrong credentials or network problem
+                showError(err.message || 'Login failed. Please check your details.');
+                btn.textContent = 'Sign In';
+                btn.disabled    = false;
+            }
+        });
+
+        //  error helpers 
+        function showError(msg) {
+            let el = document.getElementById('loginError');
+            if (!el) {
+                el = document.createElement('p');
+                el.id = 'loginError';
+                el.style.cssText = 'color:#dc2626;font-size:14px;margin-top:12px;text-align:center;';
+                document.getElementById('loginForm').appendChild(el);
+            }
+            el.textContent = msg;
+        }
+
+        function clearError() {
+            const el = document.getElementById('loginError');
+            if (el) el.textContent = '';
+        }
+    </script>
+</body>
+</html>
